@@ -5,8 +5,24 @@
 using namespace std;
 using namespace stringAPI;
 
+const int maxStringLength = 500;
+
 bool getInFileInformation(ifstream &infile);
 bool openOutFile(fstream &outfile);
+
+struct ListElement
+{
+    String value;
+    ListElement* next;
+};
+
+struct List
+{
+    ListElement* head;
+};
+
+void readStringsList(ifstream &infile, List &list);
+void readAndCheck(ifstream &infile, List& list, fstream& out);
 
 int main()
 {
@@ -25,6 +41,19 @@ int main()
     cout << (openOutFile(out) ? "Result in file 'output.txt'" : "Was created file 'output.txt'");
     //!!_______________________
 
+    List firstFile;
+    firstFile.head = nullptr;
+    readStringsList(infile1, firstFile);
+    readAndCheck(infile2, firstFile, out);
+
+    ListElement* buff = nullptr;
+    while (firstFile.head)
+    {
+        buff = firstFile.head->next;
+        deleteString(firstFile.head->value);
+        delete firstFile.head;
+        firstFile.head = buff;
+    }
     //!!____CLOSING_STREAMs____
     infile1.close();
     infile2.close();
@@ -73,21 +102,40 @@ bool openOutFile(fstream &outfile)
     }
 }
 
-void readStringsBase(ifstream &infile, StringsBase* base)
+void readStringsList(ifstream &infile, List& list)
 {
     char* inChar;
     refreshCString(inChar);
-    while (!phoneBase.eof())
+    while (!infile.eof())
     {
         infile.getline(inChar, 500);
-        if (inChar[0] != '\0')
+        list.head = new ListElement{createString(inChar), list.head};
+        refreshCString(inChar);
+    }
+}
+
+void readAndCheck(ifstream &infile, List& list, fstream &out)
+{
+    cout << "\n===Output===";
+    char* inChar;
+    refreshCString(inChar);
+    String input = createString();
+    while (!infile.eof())
+    {
+        infile.getline(inChar, 500);
+        changeString(input, inChar);
+        ListElement* current = list.head;
+        while (current)
         {
-            addRecord(name, phone, phonebook);
-        }
-        else
-        {
-            delete [] record;
+            if (areEqualStrings(current->value, input))
+            {
+                cout << "\n" << stringToCharPtr(input);
+                out << stringToCharPtr(input) << endl;
+                break;
+            }
+            current = current->next;
         }
         refreshCString(inChar);
     }
+    deleteString(input);
 }
