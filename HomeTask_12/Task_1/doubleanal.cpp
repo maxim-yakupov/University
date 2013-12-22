@@ -1,9 +1,5 @@
 #include "doubleanal.h"
 
-#include <iostream>
-
-using std::cout;
-
 bool isE(char ch)
 {
     return ch == 'e' || ch == 'E';
@@ -158,7 +154,6 @@ bool isNumberWithFloatPoint(char*& str)
             }
             break;
         default://strange situation
-            cout << "\n!!!STRANGE_ERROR!!!\n";
             break;
         }
     }
