@@ -12,8 +12,7 @@ bool isCompositionSign(char ch)
 
 bool isCompositionToken(char*& str)
 {
-    return (isNumberWithFloatPoint(str) || ((*str == '(') && isArifmExpression(++str)
-                                            && (*(str++) == ')')));
+    return (isNumberWithFloatPoint(str) || ((*str == '(') && isArifmExpression(++str) && (*(str++) == ')')));
 }
 
 bool isComposition(char*& str)
