@@ -75,6 +75,10 @@ long int hashStr(char* str, unsigned int length)
 
 long int pow(int base, int exp)
 {
+    if (!exp)
+    {
+        return 1;
+    }
     long int answer = base;
     while (--exp)
     {
