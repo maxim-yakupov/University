@@ -1,14 +1,13 @@
 #include <iostream>
+#include "stringutils.h"
 
 using namespace std;
 
 const int codeShift = 31;
 const int mult = 23;
 
-int charStringLength(const char str[]);
 long int pow(int base, int exp);
 long int hashStr(char* str, unsigned int length);
-bool compare(char* str1, char* str2);
 
 int main()
 {
@@ -39,26 +38,6 @@ int main()
     delete [] str1;
     delete [] str2;
     return 0;
-}
-
-int charStringLength(const char str[])
-{
-    int counter = 0;
-    while (str[counter] != '\0')
-    {
-        counter++;
-    }
-    return counter;
-}
-
-bool compare(char* str1, char* str2)
-{
-    while (*str1 && (*str1 == *str2))
-    {
-        str1++;
-        str2++;
-    }
-    return !*str1;
 }
 
 long int hashStr(char* str, unsigned int length)
