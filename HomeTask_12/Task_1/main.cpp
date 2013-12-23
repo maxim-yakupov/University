@@ -12,47 +12,27 @@ bool isCompositionSign(char ch)
 
 bool isCompositionToken(char*& str)
 {
-    if (isNumberWithFloatPoint(str) || ((*str == '(') && isArifmExpression(++str) && (*str == ')')))
-    {
-        return true;
-    }
-    return false;
+    return (isNumberWithFloatPoint(str) || ((*str == '(') && isArifmExpression(++str) && (*str == ')')));
 }
 
 bool isComposition(char*& str)
 {
-    if (!isCompositionSign(*str) || (isCompositionToken(++str) && isComposition(str)))
-    {
-        return true;
-    }
-    return false;
+    return (!isCompositionSign(*str) || (isCompositionToken(++str) && isComposition(str)));
 }
 
 bool isSummToken(char*& str)
 {
-    if (isCompositionToken(str) && isComposition(str))
-    {
-        return true;
-    }
-    return false;
+    return (isCompositionToken(str) && isComposition(str));
 }
 
 bool isSumm(char*& str)
 {
-    if (!isSign(*str) || (isSummToken(++str) && isSumm(str)))
-    {
-        return true;
-    }
-    return false;
+    return (!isSign(*str) || (isSummToken(++str) && isSumm(str)));
 }
 
 bool isArifmExpression(char*& str)
 {
-    if (isSummToken(str) && isSumm(str))
-    {
-        return true;
-    }
-    return false;
+    return (isSummToken(str) && isSumm(str));
 }
 
 int main()
@@ -65,8 +45,9 @@ int main()
     cout << "CompositionToken -> (ArifmExpression) | NumberWithFloatPoint\n\n";
     cout << "Write expression: ";
     char* str = new char [500];
+    char* stream = str;
     cin.getline(str, 500);
-    cout << ((isArifmExpression(str) && !*str) ? "\nIt is correct arifmetical expression" : "\nIt is NOT correct arifmetical expression");
+    cout << ((isArifmExpression(stream) && !*stream) ? "\nIt is correct arifmetical expression" : "\nIt is NOT correct arifmetical expression");
     delete [] str;
     return 0;
 }

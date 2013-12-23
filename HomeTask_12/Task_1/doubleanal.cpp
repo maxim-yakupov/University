@@ -25,11 +25,11 @@ bool isEnd(char ch)
     return !(isE(ch) || isDigit(ch) || isDot(ch));
 }
 
-//(sign | ε) (dig) ((.) (dig) (dig*) | ε) ((e | E) (sign | ε) (dig) (dig*) | ε)
+//(sign | ε) (dig) (dig)* ((.) (dig) (dig*) | ε) ((e | E) (sign | ε) (dig) (dig*) | ε)
 
 bool isNumberWithFloatPoint(char*& str)
 {
-    enum states {BEG_MANT, ONE_DIG_MANT, DOT_OR_E, ONE_DIG_AFTER_DOT, ANY_DIG_MANT, BEG_EXP, ONE_DIG_EXP, ANY_DIG_EXP};
+    enum states {BEG_MANT, ONE_DIG_MANT, ANY_DIG_INT_MANT, DOT_OR_E, ONE_DIG_AFTER_DOT, ANY_DIG_MANT, BEG_EXP, ONE_DIG_EXP, ANY_DIG_EXP};
     states state = BEG_MANT;
     while (true)
     {
@@ -43,7 +43,7 @@ bool isNumberWithFloatPoint(char*& str)
             }
             else if (isDigit(str[0]))
             {
-                state = DOT_OR_E;
+                state = ANY_DIG_INT_MANT;
                 str++;
             }
             else
@@ -54,12 +54,22 @@ bool isNumberWithFloatPoint(char*& str)
         case ONE_DIG_MANT://one digit
             if (isDigit(str[0]))
             {
-                state = DOT_OR_E;
+                state = ANY_DIG_INT_MANT;
                 str++;
             }
             else
             {
                 return false;
+            }
+            break;
+        case ANY_DIG_INT_MANT://any digits
+            if (isDigit(str[0]))
+            {
+                str++;
+            }
+            else
+            {
+                state = DOT_OR_E;
             }
             break;
         case DOT_OR_E://dot or exp
