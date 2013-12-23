@@ -104,7 +104,7 @@ bool openOutFile(fstream &outfile)
 
 void readStringsList(ifstream &infile, List& list)
 {
-    char* inChar;
+    char* inChar = nullptr;
     refreshCString(inChar);
     while (!infile.eof())
     {
@@ -112,12 +112,13 @@ void readStringsList(ifstream &infile, List& list)
         list.head = new ListElement{createString(inChar), list.head};
         refreshCString(inChar);
     }
+    delete [] inChar;
 }
 
 void readAndCheck(ifstream &infile, List& list, fstream &out)
 {
     cout << "\n===Output===";
-    char* inChar;
+    char* inChar = nullptr;
     refreshCString(inChar);
     String input = createString();
     while (!infile.eof())
@@ -138,4 +139,5 @@ void readAndCheck(ifstream &infile, List& list, fstream &out)
         refreshCString(inChar);
     }
     deleteString(input);
+    delete [] inChar;
 }
