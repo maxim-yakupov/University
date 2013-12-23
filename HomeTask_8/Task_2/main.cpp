@@ -97,7 +97,7 @@ int main()
         next = getNextInQueue(pathMatrix, printQueue, vertices);
         summaryPath += pathMatrix[next].lengthOfPath;
         //!!TRANSITIONAL_VERTICES
-        if (pathMatrix[next].parent != current)
+        if (next && (pathMatrix[next].parent != current))
         {
             cout << "\n      went through";
             for (int i = pathMatrix[next].parent; i != current; i = pathMatrix[i].parent)
