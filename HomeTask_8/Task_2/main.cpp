@@ -67,21 +67,25 @@ int main()
     unsigned int* printQueue = new unsigned int [vertices];
     unsigned int* pathQueue = new unsigned int [vertices];
     Node* pathMatrix = new Node [vertices];
+    Node* pathMatrixForLink = new Node [vertices];
 
     cleanUpQueue(printQueue, vertices);
+    cleanUpQueue(pathQueue, vertices);
     cleanUpPathMatrix(pathMatrix, vertices, 4);
+    cleanUpPathMatrix(pathMatrixForLink, vertices, 4);
 
     cout << endl;
 
     unsigned int next = 0;
     unsigned int current = 0;
     unsigned int summaryPath = 0;
+    cleanUpPathMatrix(pathMatrix, vertices, current);
+    dijkstra(matrix, pathMatrix, vertices, pathQueue, current);
     //!!_____________________________
     //!!________THE_MAIN_LOOP________
     while (!isQueueEmpty(printQueue, vertices))
     {
-        current = getNextInQueue(pathMatrix, printQueue, vertices);
-        cleanUpPathMatrix(pathMatrix, vertices, current);
+        cleanUpPathMatrix(pathMatrixForLink, vertices, current);
         cleanUpQueue(pathQueue, vertices);
         if (current)
         {
@@ -93,20 +97,22 @@ int main()
         }
         cout << "town: " << current << " length of path between first & current: " << summaryPath;
         printQueue[current] = false;
-        dijkstra(matrix, pathMatrix, vertices, pathQueue, current);
+        dijkstra(matrix, pathMatrixForLink, vertices, pathQueue, current);
+        cout << "\n\n      (dijkstra from first to current = " << pathMatrix[current].lengthOfPath << ")\n";//!! dijkstra out
         next = getNextInQueue(pathMatrix, printQueue, vertices);
-        summaryPath += pathMatrix[next].lengthOfPath;
+        summaryPath += pathMatrixForLink[next].lengthOfPath;
         //!!TRANSITIONAL_VERTICES
-        if (next && (pathMatrix[next].parent != current))
+        if (next && (pathMatrixForLink[next].parent != current))
         {
             cout << "\n      went through";
-            for (int i = pathMatrix[next].parent; i != current; i = pathMatrix[i].parent)
+            for (int i = pathMatrixForLink[next].parent; i != current; i = pathMatrixForLink[i].parent)
             {
                 cout << " " << i;
             }
         }
         //!!_____________________
         cout << endl;
+        current = getNextInQueue(pathMatrix, printQueue, vertices);
     }
     //!!_____________________________
     //!!____FREE MEMORY_____
@@ -120,6 +126,7 @@ int main()
     delete[] matrix;
 
     delete[] pathMatrix;
+    delete[] pathMatrixForLink;
     //!!_______________________
     //!!____CLOSING_STREAM_____
     infile.close();
