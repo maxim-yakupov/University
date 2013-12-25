@@ -99,6 +99,12 @@ int main()
         printQueue[current] = false;
         dijkstra(matrix, pathMatrixForLink, vertices, pathQueue, current);
         cout << "\n\n      (dijkstra from first to current = " << pathMatrix[current].lengthOfPath << ")\n";//!! dijkstra out
+        cout << "      dijkstra way: " << current;
+        for (int i = pathMatrix[current].parent; i != -1; i = pathMatrix[i].parent)//dijkstra ways
+        {
+            cout << " <- " << i;
+        }
+        cout << endl;
         next = getNextInQueue(pathMatrix, printQueue, vertices);
         summaryPath += pathMatrixForLink[next].lengthOfPath;
         //!!TRANSITIONAL_VERTICES
