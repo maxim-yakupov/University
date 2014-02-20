@@ -74,7 +74,7 @@ CharStack* makePolishNotation(char* incomeStr)
         }
         else if (isOperator(token))
         {
-            /*private head*/while ((myOpsStack->isEmpty()) && isOperator(myOpsStack->top()) && (priority(token) <= priority(myOpsStack->top())))
+            while ((myOpsStack->isEmpty()) && isOperator(myOpsStack->top()) && (priority(token) <= priority(myOpsStack->top())))
             {
                 polishInStack->push(myOpsStack->top());
                 myOpsStack->pop();
@@ -88,7 +88,7 @@ CharStack* makePolishNotation(char* incomeStr)
         incomeStr = incomeStr + 1;
         counter--;
     };
-    /*private head*/while (myOpsStack->isEmpty())
+    while (myOpsStack->isEmpty())
     {
         polishInStack->push(myOpsStack->top());
         myOpsStack->pop();
@@ -106,7 +106,7 @@ double compute(CharStack* polishInStack)
     polishInStack = p;
 
     Stack* myStack = new Stack();
-    /*private head*/while (polishInStack->isEmpty())
+    while (polishInStack->isEmpty())
     {
         if (isNumber(polishInStack->top()))
         {
@@ -132,7 +132,7 @@ double compute(CharStack* polishInStack)
 CharStack* invertStack(CharStack* stack)
 {
     CharStack* newStack = new CharStack();
-    /*private head*/while (stack->isEmpty())
+    while (stack->isEmpty())
     {
         newStack->push(stack->top());
         stack->pop();
