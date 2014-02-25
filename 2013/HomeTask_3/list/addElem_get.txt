@@ -1,0 +1,21 @@
+    ListElement addElement_get(int pos, int value, List list)
+    {
+        ListElement* current = goSomeSteps(pos - 1, list);
+
+        if (current == nullptr)
+        {
+            current = new ListElement {12345, nullptr};
+        };
+
+        ListElement* newElem = new ListElement {value, current->next};
+        current->next = newElem;
+        list.last++;
+
+        if (list.head == nullptr)
+        {
+            list.head = newElem;
+            delete current;
+        };
+
+        return *newElem;
+    }
