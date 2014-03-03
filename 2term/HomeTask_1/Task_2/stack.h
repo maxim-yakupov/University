@@ -1,38 +1,13 @@
 #pragma once
 
+template <class Type>
 class Stack
 {
 public:
-    Stack();
-    ~Stack();
-    void push(double value);
-    double top() const;
-    void pop();
-    bool isEmpty() const;
-private:
-    struct StackElement
-    {
-        StackElement* prev;
-        double value;
-    };
-    StackElement* head;
+    Stack(){}
+    virtual ~Stack(){}
+    virtual void push(Type value) = 0;
+    virtual Type top() const = 0;
+    virtual void pop() = 0;
+    virtual bool isEmpty() const = 0;
 };
-
-class CharStack
-{
-public:
-    CharStack();
-    ~CharStack();
-    void push(char value);
-    char top() const;
-    void pop();
-    bool isEmpty() const;
-private:
-    struct CharStackElement
-    {
-        CharStackElement* prev;
-        char value;
-    };
-    CharStackElement* head;
-};
-

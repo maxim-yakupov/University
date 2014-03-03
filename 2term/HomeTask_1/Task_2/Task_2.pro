@@ -5,9 +5,11 @@ CONFIG -= qt
 
 CONFIG += c++11
 
-SOURCES += main.cpp \
-    stack.cpp
+SOURCES += main.cpp
 
 HEADERS += \
-    stack.h
+    stack.h \
+    pointerstack.h \
+    arraystack.h \
+    calculator.h
 
