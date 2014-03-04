@@ -1,31 +1,54 @@
-#include <iostream>
 #include "doublylinkedlist.h"
+//#include <iostream>
 
-DoublyLinkedList::DoublyLinkedList(int value):List(value)
+DoublyLinkedList::DoublyLinkedList()
 {
-    prev = nullptr;
 //    std::cout << "\nDebug:constrDLList " << this->elemValue << "\n";
 }
 
 DoublyLinkedList::~DoublyLinkedList()
 {
 //    std::cout << "\nDebug:destrDLList " << this->elemValue << "\n";
+    if (this->head)
+    {
+        while (this->head->next)
+        {
+            DLListElement* deleted = (DLListElement*)this->head->next;
+            this->head->next = this->head->next->next;
+            delete deleted;
+        }
+        delete this->head;
+    }
 }
 
 void DoublyLinkedList::addValue(int value)
 {
-    DoublyLinkedList* current = this;
-    while(current->next)
+    DLListElement* current = (DLListElement*)this->head;
+    if (this->length())
     {
-        current = (DoublyLinkedList*)current->next;
+        while(current->next)
+        {
+            current = (DLListElement*)current->next;
+        }
+        current->next = new DLListElement;//!!D:\Ucheba\Programming\2014\HomeTask_1\Task_1\singlylinkedlist.cpp:28: ошибка: could not convert '{value, nullptr}' from '<brace-enclosed initializer list>' to 'SLListElement' current->next = new SLListElement{value, nullptr};
+    //                                                                                                                                                                                                                                                                       ^
+        current->next->elemValue = value;
+        current->next->next = nullptr;
+        ((DLListElement*)current->next)->prev = current;
     }
-    current->next = new DoublyLinkedList(value);
-    ((DoublyLinkedList*)current->next)->prev = current;
+    else
+    {
+        this->head = new DLListElement;
+        this->head->elemValue = value;
+        this->head->next = nullptr;
+        ((DLListElement*)this->head)->prev = nullptr;
+    }
+    this->size++;
 }
 
 void DoublyLinkedList::addPos(int pos, int value)
 {
-    DoublyLinkedList* current = this;
+    DLListElement* current = (DLListElement*)this->head;
     if (pos >= this->length())
     {
         this->addValue(value);
@@ -34,44 +57,48 @@ void DoublyLinkedList::addPos(int pos, int value)
     {
         while (current->next && (pos - 1))
         {
-            current = (DoublyLinkedList*)current->next;
+            current = (DLListElement*)current->next;
             pos--;
         }
-        DoublyLinkedList* next = (DoublyLinkedList*)current->next;
-        current->next = new DoublyLinkedList(value);
-        ((DoublyLinkedList*)current->next)->next = next;
+        DLListElement* next = (DLListElement*)current->next;
+
+        current->next = new DLListElement;
+        current->next->elemValue = value;
+        current->next->next = next;
+        ((DLListElement*)current->next)->prev = current;
+
+        this->size++;
     }
 }
 
 void DoublyLinkedList::deletePos(int pos)
 {
-    DoublyLinkedList* current = this;
-    DoublyLinkedList* previous = this;
+    if (!this->length()) return;
+    DLListElement* current = (DLListElement*)this->head;
+    DLListElement* previous = (DLListElement*)this->head;
+    if (!pos)
+    {
+        this->head = current->next;
+        current->prev = nullptr;
+        delete previous;
+        return;
+    }
     while(current->next && (pos - 1))
     {
         previous = current;
-        current = (DoublyLinkedList*)current->next;
+        current = (DLListElement*)current->next;
         pos--;
     }
     if (current->next)
     {
-        DoublyLinkedList* next = (DoublyLinkedList*)((DoublyLinkedList*)current->next)->next;
-        delete (DoublyLinkedList*)current->next;
+        DLListElement* next = (DLListElement*)current->next->next;
+        delete current->next;
         current->next = next;
+        next->prev = current;
     }
     else
     {
         previous->next = nullptr;
-        delete (DoublyLinkedList*)current;
-    }
-}
-
-void DoublyLinkedList::deleteList()
-{
-    while (next)
-    {
-        DoublyLinkedList* deleted = (DoublyLinkedList*)next;
-        next = (DoublyLinkedList*)((DoublyLinkedList*)next)->next;
-        delete (DoublyLinkedList*)deleted;
+        delete current;
     }
 }

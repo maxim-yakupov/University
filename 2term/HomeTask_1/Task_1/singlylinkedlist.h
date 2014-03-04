@@ -2,23 +2,22 @@
 #include "list.h"
 
 /*
- * Doubly linked list
+ * Singly linked list
  *
  * numeration from zero(0)
  *
  * Based on List class
  */
 
-struct DLListElement:public ListElement
+struct SLListElement:public ListElement
 {
-    DLListElement* prev;
 };
 
-class DoublyLinkedList : public List
+class SinglyLinkedList:public List
 {
 public:
-    DoublyLinkedList();
-    ~DoublyLinkedList();
+    SinglyLinkedList();
+    ~SinglyLinkedList();
     void addValue(int value);//adds last element
     void addPos(int pos, int value);//adds on position or last element
     void deletePos(int pos);//deletes element from position or last element
