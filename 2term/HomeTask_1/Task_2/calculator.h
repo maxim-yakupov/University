@@ -7,10 +7,12 @@ class Calculator
 {
 public:
     Calculator(char* incomeStr);
+    ~Calculator();
     double compute();
 private:
     char* incomeStr;
     TCharStack* polishInStack;
+
     int strlen(char* str);
     void makePolishNotation();
     TCharStack *invertStack();
@@ -31,8 +33,23 @@ private:
 template <class TCharStack, class TDoubleStack>
 Calculator<TCharStack, TDoubleStack>::Calculator(char* incomeStr)
 {
-    this->incomeStr = incomeStr;
+    unsigned int pos = 0;
+    unsigned int length = this->strlen(incomeStr);
+    this->incomeStr = new char[length];
+    while (length)
+    {
+        this->incomeStr[pos] = incomeStr[pos];
+        ++pos;
+        --length;
+    }
     this->polishInStack = new TCharStack();
+}
+
+template <class TCharStack, class TDoubleStack>
+Calculator<TCharStack, TDoubleStack>::~Calculator()
+{
+    delete [] this->incomeStr;
+    delete this->polishInStack;
 }
 
 template <class TCharStack, class TDoubleStack>
