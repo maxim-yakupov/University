@@ -18,10 +18,12 @@ int main()
     list.addPos(5, 3);
     list.addPos(1, 99);
     list.deletePos(1);
-    cout << "getted pos 1, value:" << list.getPos(1)->elemValue << endl;
+//commented, cause you said, that it is unnesessary :(
+//    cout << "getted pos 1, value:" << list.getPos(1)->elemValue << endl;
+    //  check for empty list
     //    list.deletePos(0);
     //    list.deletePos(0);
-    //    list.deletePos(0);  check for empty list
+    //    list.deletePos(0);
     list.print();
 
     cout << "\nDoubly linked list:\n";
@@ -32,11 +34,13 @@ int main()
     list2.addPos(1, 99);
     list2.print();
     list2.deletePos(1);
-    cout << "getted pos 1, value:" << list2.getPos(1)->elemValue << endl;
-    cout << "getted pos 1, prev value:" << ((DLListElement*)list2.getPos(1))->prev->elemValue << endl;
+//commented, cause you said, that it is unnesessary :(
+//    cout << "getted pos 1, value:" << list2.getPos(1)->elemValue << endl;
+//    cout << "getted pos 1, prev value:" << ((DLListElement*)list2.getPos(1))->prev->elemValue << endl;
+    //  check for empty list
     //    list2.deletePos(0);
     //    list2.deletePos(0);
-    //    list2.deletePos(0);  check for empty list
+    //    list2.deletePos(0);
     list2.print();
 
     cout << "\nSingly linked list heap try:\n";

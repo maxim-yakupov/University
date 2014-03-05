@@ -9,11 +9,6 @@
  * Based on List class
  */
 
-struct DLListElement:public ListElement
-{
-    DLListElement* prev;
-};
-
 class DoublyLinkedList : public List
 {
 public:
@@ -22,4 +17,9 @@ public:
     void addValue(int value);//adds last element
     void addPos(int pos, int value);//adds on position or last element
     void deletePos(int pos);//deletes element from position or last element
+private:
+    struct DLListElement:public ListElement
+    {
+        DLListElement* prev;
+    };
 };

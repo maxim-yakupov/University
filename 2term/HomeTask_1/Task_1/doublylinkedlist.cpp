@@ -30,8 +30,7 @@ void DoublyLinkedList::addValue(int value)
         {
             current = (DLListElement*)current->next;
         }
-        current->next = new DLListElement;//!!D:\Ucheba\Programming\2014\HomeTask_1\Task_1\singlylinkedlist.cpp:28: ошибка: could not convert '{value, nullptr}' from '<brace-enclosed initializer list>' to 'SLListElement' current->next = new SLListElement{value, nullptr};
-    //                                                                                                                                                                                                                                                                       ^
+        current->next = new DLListElement;
         current->next->elemValue = value;
         current->next->next = nullptr;
         ((DLListElement*)current->next)->prev = current;

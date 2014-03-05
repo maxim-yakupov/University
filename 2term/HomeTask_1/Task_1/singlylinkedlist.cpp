@@ -30,8 +30,7 @@ void SinglyLinkedList::addValue(int value)
         {
             current = (SLListElement*)current->next;
         }
-        current->next = new SLListElement;//!!D:\Ucheba\Programming\2014\HomeTask_1\Task_1\singlylinkedlist.cpp:28: ошибка: could not convert '{value, nullptr}' from '<brace-enclosed initializer list>' to 'SLListElement' current->next = new SLListElement{value, nullptr};
-    //                                                                                                                                                                                                                                                                       ^
+        current->next = new SLListElement;
         current->next->elemValue = value;
         current->next->next = nullptr;
     }
