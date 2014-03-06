@@ -15,7 +15,7 @@ private:
 
     int strlen(char* str);
     void makePolishNotation();
-    TCharStack *invertStack();
+    void invertStack();
     double makeOperation(char c, TDoubleStack* stack);
     bool isOperator(char c);
     bool isNumber(char c);
@@ -48,8 +48,8 @@ Calculator<TCharStack, TDoubleStack>::Calculator(char* incomeStr)
 template <class TCharStack, class TDoubleStack>
 Calculator<TCharStack, TDoubleStack>::~Calculator()
 {
-    delete [] this->incomeStr;
-    delete this->polishInStack;
+    delete [] incomeStr;
+    delete polishInStack;
 }
 
 template <class TCharStack, class TDoubleStack>
@@ -67,32 +67,32 @@ template <class TCharStack, class TDoubleStack>
 void Calculator<TCharStack, TDoubleStack>::makePolishNotation()
 {
     TCharStack* myOpsStack = new TCharStack();
-    int counter = this->strlen(this->incomeStr);
+    int counter = strlen(incomeStr);
     while (counter != 0)
     {
-        char token = this->incomeStr[0];
-        if (this->isNumber(token))
+        char token = incomeStr[0];
+        if (isNumber(token))
         {
-            this->polishInStack->push(token);
+            polishInStack->push(token);
         }
-        else if (this->isOpenBrace(token))
+        else if (isOpenBrace(token))
         {
             myOpsStack->push(token);
         }
-        else if (this->isCloseBrace(token))
+        else if (isCloseBrace(token))
         {
             while (myOpsStack->top() != '(')
             {
-                this->polishInStack->push(myOpsStack->top());
+                polishInStack->push(myOpsStack->top());
                 myOpsStack->pop();
             };
             myOpsStack->pop();
         }
-        else if (this->isOperator(token))
+        else if (isOperator(token))
         {
-            while ((myOpsStack->isEmpty()) && isOperator(myOpsStack->top()) && (this->priority(token) <= this->priority(myOpsStack->top())))
+            while ((myOpsStack->isEmpty()) && isOperator(myOpsStack->top()) && (priority(token) <= priority(myOpsStack->top())))
             {
-                this->polishInStack->push(myOpsStack->top());
+                polishInStack->push(myOpsStack->top());
                 myOpsStack->pop();
             };
             myOpsStack->push(token);
@@ -101,12 +101,12 @@ void Calculator<TCharStack, TDoubleStack>::makePolishNotation()
         {
             break;
         };
-        this->incomeStr = this->incomeStr + 1;
+        incomeStr = incomeStr + 1;
         counter--;
     };
     while (myOpsStack->isEmpty())
     {
-        this->polishInStack->push(myOpsStack->top());
+        polishInStack->push(myOpsStack->top());
         myOpsStack->pop();
     };
 
@@ -116,45 +116,42 @@ void Calculator<TCharStack, TDoubleStack>::makePolishNotation()
 template <class TCharStack, class TDoubleStack>
 double Calculator<TCharStack, TDoubleStack>::compute()
 {
-    this->makePolishNotation();
-    TCharStack* p = this->invertStack();
-    delete this->polishInStack;
-    this->polishInStack = p;
-
+    makePolishNotation();
+    invertStack();
     TDoubleStack* myStack = new TDoubleStack();
-    while (this->polishInStack->isEmpty())
+    while (polishInStack->isEmpty())
     {
-        if (this->isNumber(this->polishInStack->top()))
+        if (isNumber(polishInStack->top()))
         {
-            myStack->push(this->polishInStack->top() - '0');
+            myStack->push(polishInStack->top() - '0');
         }
-        else if (this->isOperator(this->polishInStack->top()))
+        else if (isOperator(polishInStack->top()))
         {
-            myStack->push(this->makeOperation(this->polishInStack->top(), myStack));
+            myStack->push(makeOperation(polishInStack->top(), myStack));
         }
         else
         {
             break;
         };
-        this->polishInStack->pop();
+        polishInStack->pop();
     };
     double result = myStack->top();
-    myStack->pop();
     delete myStack;
-    delete p;
+    delete polishInStack;
     return result;
 }
 
 template <class TCharStack, class TDoubleStack>
-TCharStack *Calculator<TCharStack, TDoubleStack>::invertStack()
+void Calculator<TCharStack, TDoubleStack>::invertStack()
 {
     TCharStack* newStack = new TCharStack();
-    while (this->polishInStack->isEmpty())
+    while (polishInStack->isEmpty())
     {
-        newStack->push(this->polishInStack->top());
-        this->polishInStack->pop();
+        newStack->push(polishInStack->top());
+        polishInStack->pop();
     };
-    return newStack;
+    delete polishInStack;
+    polishInStack = newStack;
 }
 
 template <class TCharStack, class TDoubleStack>

@@ -27,41 +27,40 @@ private:
  */
 
 template <class Type>
-ArrayStack<Type>::ArrayStack()
+ArrayStack<Type>::ArrayStack() : head(0)
 {
-    this->head = 0;
 }
 
 template <class Type>
 ArrayStack<Type>::~ArrayStack()
 {
-    while (this->head)
+    while (head)
     {
-        this->pop();
+        pop();
     }
 }
 
 template <class Type>
 void ArrayStack<Type>::push(Type value)
 {
-    this->array[this->head] = value;
-    this->head++;
+    array[head] = value;
+    head++;
 }
 
 template <class Type>
 Type ArrayStack<Type>::top() const
 {
-    return this->array[this->head - 1];
+    return array[head - 1];
 }
 
 template <class Type>
 void ArrayStack<Type>::pop()
 {
-    this->head--;
+    head--;
 }
 
 template <class Type>
 bool ArrayStack<Type>::isEmpty() const
 {
-    return this->head;
+    return head;
 }

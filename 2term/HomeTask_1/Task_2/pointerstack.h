@@ -27,43 +27,42 @@ private:
  */
 
 template <class Type>
-PointerStack<Type>::PointerStack()
+PointerStack<Type>::PointerStack() : head(nullptr)
 {
-    this->head = nullptr;
 }
 
 template <class Type>
 PointerStack<Type>::~PointerStack()
 {
-    while (this->head)
+    while (head)
     {
-        this->pop();
+        pop();
     }
 }
 
 template <class Type>
 void PointerStack<Type>::push(Type value)
 {
-    StackElement* newEl = new StackElement {this->head, value};
-    this->head = newEl;
+    StackElement* newEl = new StackElement {head, value};
+    head = newEl;
 }
 
 template <class Type>
 Type PointerStack<Type>::top() const
 {
-    return this->head->value;
+    return head->value;
 }
 
 template <class Type>
 void PointerStack<Type>::pop()
 {
-    StackElement* newEl = this->head;
-    this->head = newEl->prev;
+    StackElement* newEl = head;
+    head = newEl->prev;
     delete newEl;
 }
 
 template <class Type>
 bool PointerStack<Type>::isEmpty() const
 {
-    return this->head;
+    return head;
 }
