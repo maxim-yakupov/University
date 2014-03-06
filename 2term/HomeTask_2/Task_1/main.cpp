@@ -13,7 +13,8 @@ void writeArray(int array[], int length);
 int main()
 {
     const int arrayLength = 10;
-    int array[arrayLength];
+    int array[arrayLength] = {0};
+    //writeArray(array, arrayLength);//check of initialization
 
     cout << "Array consists with " << arrayLength << " elements.\n";
     cout << "Before every sort it will be generated again\n\n";
@@ -50,6 +51,11 @@ int main()
     return 0;
 }
 
+/**
+ * @brief genArray Generates array's values
+ * @param array Array, which we fill
+ * @param length Number of elements in this array
+ */
 void genArray(int array[], int length)
 {
     srand(clock());
@@ -59,6 +65,11 @@ void genArray(int array[], int length)
     };
 }
 
+/**
+ * @brief writeArray Prints array
+ * @param array Array, which we print
+ * @param length Number of elements in this array
+ */
 void writeArray(int array[], int length)
 {
     for (int i = 0; i < length; i++)
