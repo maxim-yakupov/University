@@ -1,14 +1,11 @@
 #include "singlylinkedlist.h"
-//#include <iostream>
 
 SinglyLinkedList::SinglyLinkedList()
 {
-//    std::cout << "\nDebug:constrSLList " << this->elemValue << "\n";
 }
 
 SinglyLinkedList::~SinglyLinkedList()
 {
-//    std::cout << "\nDebug:destrSLList " << this->elemValue << "\n";
     if (this->head)
     {
         while (this->head->next)

@@ -1,14 +1,11 @@
 #include "doublylinkedlist.h"
-//#include <iostream>
 
 DoublyLinkedList::DoublyLinkedList()
 {
-//    std::cout << "\nDebug:constrDLList " << this->elemValue << "\n";
 }
 
 DoublyLinkedList::~DoublyLinkedList()
 {
-//    std::cout << "\nDebug:destrDLList " << this->elemValue << "\n";
     if (this->head)
     {
         while (this->head->next)
