@@ -14,10 +14,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-public slots:
-    void checkForDivisionByZero();
 private:
-    void compute();
     Ui::MainWindow *ui;
 };
 
