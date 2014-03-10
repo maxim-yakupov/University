@@ -8,7 +8,6 @@
 class ConsoleOutputter : public Outputter
 {
 public:
-    ConsoleOutputter();
     ~ConsoleOutputter();
     bool output(int **array, unsigned int size);
 };

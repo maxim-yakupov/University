@@ -1,10 +1,6 @@
 #include "consoleoutputter.h"
 #include <iostream>
 
-ConsoleOutputter::ConsoleOutputter()
-{
-}
-
 ConsoleOutputter::~ConsoleOutputter()
 {
 }

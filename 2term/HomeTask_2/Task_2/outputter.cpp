@@ -1,9 +1,5 @@
 #include "outputter.h"
 
-Outputter::Outputter()
-{
-}
-
 Outputter::~Outputter()
 {
 }

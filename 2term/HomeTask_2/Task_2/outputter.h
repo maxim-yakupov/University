@@ -7,7 +7,6 @@
 class Outputter
 {
 public:
-    Outputter();
     virtual ~Outputter();
     /**
      * @brief output Printing out way of bypass

@@ -62,6 +62,12 @@ int main()
 
     delete outputter;
 
+    for (unsigned int i = 0; i < size; i++)
+    {
+        delete [] array[i];
+    }
+    delete [] array;
+
     return 0;
 }
 

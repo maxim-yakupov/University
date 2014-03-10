@@ -8,7 +8,6 @@
 class FileOutputter : public Outputter
 {
 public:
-    FileOutputter();
     ~FileOutputter();
     bool output(int **array, unsigned int size);
 };

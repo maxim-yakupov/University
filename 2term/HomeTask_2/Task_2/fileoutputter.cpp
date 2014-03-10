@@ -1,10 +1,6 @@
 #include "fileoutputter.h"
 #include <fstream>
 
-FileOutputter::FileOutputter()
-{
-}
-
 FileOutputter::~FileOutputter()
 {
 }
