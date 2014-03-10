@@ -1,9 +1,5 @@
 #include "simplecalc.h"
 
-SimpleCalc::SimpleCalc()
-{
-}
-
 int SimpleCalc::compute(int result, int secondField, int operation)
 {
     if (operation == 0)
