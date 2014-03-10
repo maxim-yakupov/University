@@ -40,13 +40,20 @@ int main()
     writeArray(array, width, height);
     cout << endl;
 
+    for (unsigned int i = 0; i < height; i++)
+    {
+        delete [] array[i];
+    }
+    delete [] array;
+
     return 0;
 }
 
 /**
- * @brief genArray Generates array's values
+ * @brief genArray Generates matrix's values
  * @param array Array, which we fill
- * @param length Number of elements in this array
+ * @param width Number of elements in this matrix's row
+ * @param height Number of elements in this matrix's column
  */
 void genArray(int **array, unsigned int width, unsigned int height)
 {
@@ -61,9 +68,10 @@ void genArray(int **array, unsigned int width, unsigned int height)
 }
 
 /**
- * @brief writeArray Prints array
+ * @brief writeArray Prints 2D array
  * @param array Array, which we print
- * @param length Number of elements in this array
+ * @param width Number of elements in this matrix's row
+ * @param height Number of elements in this matrix's column
  */
 void writeArray(int **array, unsigned int width, unsigned int height)
 {
