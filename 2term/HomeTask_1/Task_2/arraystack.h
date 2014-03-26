@@ -11,6 +11,7 @@ public:
     Type top() const;
     void pop();
     bool isEmpty() const;
+    void clear();
 private:
     Type array[1000];
     unsigned int head;
@@ -34,10 +35,7 @@ ArrayStack<Type>::ArrayStack() : head(0)
 template <class Type>
 ArrayStack<Type>::~ArrayStack()
 {
-    while (head)
-    {
-        pop();
-    }
+    clear();
 }
 
 template <class Type>
@@ -56,11 +54,20 @@ Type ArrayStack<Type>::top() const
 template <class Type>
 void ArrayStack<Type>::pop()
 {
-    head--;
+    if (head) head--;
 }
 
 template <class Type>
 bool ArrayStack<Type>::isEmpty() const
 {
     return head;
+}
+
+template <class Type>
+void ArrayStack<Type>::clear()
+{
+    while (head)
+    {
+        pop();
+    }
 }

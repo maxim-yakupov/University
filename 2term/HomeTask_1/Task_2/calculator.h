@@ -1,27 +1,79 @@
 #pragma once
+
+/**
+ * @brief The TokenStruct struct
+ */
+struct TokenStruct
+{
+    /**
+     * @brief value
+     */
+    double value;
+    /**
+     * @brief tokenTypeId
+     * @detailed Saves code of token's type:
+     * 0 - double
+     * 1 - '+'
+     * 2 - '-'
+     * 3 - '*'
+     * 4 - '/'
+     * 5 - '('
+     * 9 - some error
+     */
+    unsigned int tokenTypeId;
+};
+
 #include "pointerstack.h"
 #include "arraystack.h"
 
-template <class TCharStack, class TDoubleStack>
+#include <iostream>
+
+template <class TTokenStack, class TDoubleStack>
+/**
+ * @brief The Calculator class
+ */
 class Calculator
 {
 public:
+    /**
+     * @brief operator () Changes string-expression(incomeStr field)
+     * @param inStr String, which we copy in class
+     */
+    void operator()(char* inStr);
+    /**
+     * @brief Calculator
+     */
+    Calculator();
+    /**
+     * @brief Calculator Constructor with string-expression as parameter
+     * @param incomeStr String, which we copy in class
+     */
     Calculator(char* incomeStr);
+    /**
+     * @brief ~Calculator
+     */
     ~Calculator();
+    /**
+     * @brief compute Evaluetes expression, which we inserted
+     * @return Result of evaluation of string-expression(from field incomeStr)
+     */
     double compute();
 private:
     char* incomeStr;
-    TCharStack* polishInStack;
+    TTokenStack* polishInStack;
 
     int strlen(char* str);
     void makePolishNotation();
     void invertStack();
-    double makeOperation(char c, TDoubleStack* stack);
     bool isOperator(char c);
     bool isNumber(char c);
+    double makeOperationById(unsigned int c, TDoubleStack* stack);
+    bool isOperatorById(unsigned int c);
+    bool isNumberById(unsigned int c);
     bool isOpenBrace(char c);
     bool isCloseBrace(char c);
     int priority(char c);
+    int priorityById(unsigned int c);
 };
 
 /*
@@ -30,30 +82,45 @@ private:
  *  implementation should be in header file)
  */
 
-template <class TCharStack, class TDoubleStack>
-Calculator<TCharStack, TDoubleStack>::Calculator(char* incomeStr)
+template <class TTokenStack, class TDoubleStack>
+void Calculator<TTokenStack, TDoubleStack>::operator()(char* inStr)
 {
     unsigned int pos = 0;
-    unsigned int length = this->strlen(incomeStr);
-    this->incomeStr = new char[length];
+    unsigned int length = strlen(inStr);
+    delete [] incomeStr;
+    incomeStr = new char[length + 1];
     while (length)
     {
-        this->incomeStr[pos] = incomeStr[pos];
+        incomeStr[pos] = inStr[pos];
         ++pos;
         --length;
     }
-    this->polishInStack = new TCharStack();
+    incomeStr[pos] = '\0';
 }
 
-template <class TCharStack, class TDoubleStack>
-Calculator<TCharStack, TDoubleStack>::~Calculator()
+template <class TTokenStack, class TDoubleStack>
+Calculator<TTokenStack, TDoubleStack>::Calculator()
+{
+    incomeStr = new char{'\0'};
+    polishInStack = new TTokenStack();
+}
+
+template <class TTokenStack, class TDoubleStack>
+Calculator<TTokenStack, TDoubleStack>::Calculator(char* inStr)
+{
+    this->operator()(inStr);
+    polishInStack = new TTokenStack();
+}
+
+template <class TTokenStack, class TDoubleStack>
+Calculator<TTokenStack, TDoubleStack>::~Calculator()
 {
     delete [] incomeStr;
     delete polishInStack;
 }
 
-template <class TCharStack, class TDoubleStack>
-int Calculator<TCharStack, TDoubleStack>::strlen(char* str)
+template <class TTokenStack, class TDoubleStack>
+int Calculator<TTokenStack, TDoubleStack>::strlen(char* str)
 {
     int length = 0;
     while (*(str + length) != '\0')
@@ -63,42 +130,101 @@ int Calculator<TCharStack, TDoubleStack>::strlen(char* str)
     return length;
 }
 
-template <class TCharStack, class TDoubleStack>
-void Calculator<TCharStack, TDoubleStack>::makePolishNotation()
+template <class TTokenStack, class TDoubleStack>
+void Calculator<TTokenStack, TDoubleStack>::makePolishNotation()
 {
-    TCharStack* myOpsStack = new TCharStack();
+    TTokenStack* myOpsStack = new TTokenStack();
     int counter = strlen(incomeStr);
+    int length = counter;
+    unsigned int dotOccures = 0;
+    double mult = 0.1;
+    bool newNumber = true;
     while (counter != 0)
     {
-        char token = incomeStr[0];
-        if (isNumber(token))
+        char letter = incomeStr[0];
+        if (isNumber(letter) || letter == '.')
         {
-            polishInStack->push(token);
+            if (!polishInStack->isEmpty() || newNumber)
+            {
+                polishInStack->push({0, 0});
+            }
+            newNumber = false;
+            if (isNumber(letter))
+            {
+                double topOfPolishStack = polishInStack->top().value;
+                polishInStack->pop();
+                if (!dotOccures)
+                {
+                    topOfPolishStack = topOfPolishStack * 10 + (letter - '0');
+                }
+                else
+                {
+                    topOfPolishStack = topOfPolishStack + (letter - '0') * mult;
+                    mult /= 10;
+                    dotOccures++;
+                }
+                polishInStack->push({topOfPolishStack, 0});
+            }
+            else
+            {
+                dotOccures++;
+            }
         }
-        else if (isOpenBrace(token))
+        else if (isOpenBrace(letter))
         {
-            myOpsStack->push(token);
+            newNumber = true;
+            mult = 0.1;
+            dotOccures = 0;
+            myOpsStack->push({letter, 5});
         }
-        else if (isCloseBrace(token))
+        else if (isCloseBrace(letter))
         {
-            while (myOpsStack->top() != '(')
+            newNumber = true;
+            mult = 0.1;
+            dotOccures = 0;
+            while (myOpsStack->top().tokenTypeId != 5)//(
             {
                 polishInStack->push(myOpsStack->top());
                 myOpsStack->pop();
             };
             myOpsStack->pop();
         }
-        else if (isOperator(token))
+        else if (isOperator(letter))
         {
-            while ((myOpsStack->isEmpty()) && isOperator(myOpsStack->top()) && (priority(token) <= priority(myOpsStack->top())))
+            newNumber = true;
+            mult = 0.1;
+            dotOccures = 0;
+            while ((myOpsStack->isEmpty()) && isOperatorById(myOpsStack->top().tokenTypeId) && (priority(letter) <= priorityById(myOpsStack->top().tokenTypeId)))
             {
                 polishInStack->push(myOpsStack->top());
                 myOpsStack->pop();
             };
-            myOpsStack->push(token);
+            unsigned int tokenId = 0;
+            if (letter == '+')
+            {
+                tokenId = 1;
+            }
+            else if (letter == '-')
+            {
+                tokenId = 2;
+            }
+            else if (letter == '*')
+            {
+                tokenId = 3;;
+            }
+            else if (letter == '/')
+            {
+                tokenId = 4;
+            }
+            else
+                tokenId = 9;
+            myOpsStack->push({letter, tokenId});
         }
         else
         {
+            newNumber = true;
+                        mult = 0.1;
+                        dotOccures = 0;
             break;
         };
         incomeStr = incomeStr + 1;
@@ -109,25 +235,26 @@ void Calculator<TCharStack, TDoubleStack>::makePolishNotation()
         polishInStack->push(myOpsStack->top());
         myOpsStack->pop();
     };
-
+    incomeStr -= length;
     delete myOpsStack;
 }
 
-template <class TCharStack, class TDoubleStack>
-double Calculator<TCharStack, TDoubleStack>::compute()
+template <class TTokenStack, class TDoubleStack>
+double Calculator<TTokenStack, TDoubleStack>::compute()
 {
     makePolishNotation();
     invertStack();
     TDoubleStack* myStack = new TDoubleStack();
+    myStack->push(0);
     while (polishInStack->isEmpty())
     {
-        if (isNumber(polishInStack->top()))
+        if (isNumberById(polishInStack->top().tokenTypeId))
         {
-            myStack->push(polishInStack->top() - '0');
+            myStack->push(polishInStack->top().value);
         }
-        else if (isOperator(polishInStack->top()))
+        else if (isOperatorById(polishInStack->top().tokenTypeId))
         {
-            myStack->push(makeOperation(polishInStack->top(), myStack));
+            myStack->push(makeOperationById(polishInStack->top().tokenTypeId, myStack));
         }
         else
         {
@@ -137,14 +264,14 @@ double Calculator<TCharStack, TDoubleStack>::compute()
     };
     double result = myStack->top();
     delete myStack;
-    delete polishInStack;
+    polishInStack->clear();
     return result;
 }
 
-template <class TCharStack, class TDoubleStack>
-void Calculator<TCharStack, TDoubleStack>::invertStack()
+template <class TTokenStack, class TDoubleStack>
+void Calculator<TTokenStack, TDoubleStack>::invertStack()
 {
-    TCharStack* newStack = new TCharStack();
+    TTokenStack* newStack = new TTokenStack();
     while (polishInStack->isEmpty())
     {
         newStack->push(polishInStack->top());
@@ -154,27 +281,27 @@ void Calculator<TCharStack, TDoubleStack>::invertStack()
     polishInStack = newStack;
 }
 
-template <class TCharStack, class TDoubleStack>
-double Calculator<TCharStack, TDoubleStack>::makeOperation(char c, TDoubleStack* stack)
+template <class TTokenStack, class TDoubleStack>
+double Calculator<TTokenStack, TDoubleStack>::makeOperationById(unsigned int c, TDoubleStack* stack)
 {
     double secondOperand = stack->top();
     stack->pop();
     double firstOperand = stack->top();
     stack->pop();
     switch (c) {
-    case '+':
+    case 1:
     {
         return firstOperand + secondOperand;
     };
-    case '-':
+    case 2:
     {
         return firstOperand - secondOperand;
     };
-    case '*':
+    case 3:
     {
         return firstOperand * secondOperand;
     };
-    case '/':
+    case 4:
     {
         return firstOperand / secondOperand;
     };
@@ -183,32 +310,44 @@ double Calculator<TCharStack, TDoubleStack>::makeOperation(char c, TDoubleStack*
     }
 }
 
-template <class TCharStack, class TDoubleStack>
-bool Calculator<TCharStack, TDoubleStack>::isOperator(char c)
+template <class TTokenStack, class TDoubleStack>
+bool Calculator<TTokenStack, TDoubleStack>::isOperator(char c)
 {
     return ((c == '+') || (c == '-') || (c == '/') || (c == '*'));
 }
 
-template <class TCharStack, class TDoubleStack>
-bool Calculator<TCharStack, TDoubleStack>::isNumber(char c)
+template <class TTokenStack, class TDoubleStack>
+bool Calculator<TTokenStack, TDoubleStack>::isOperatorById(unsigned int c)
+{
+    return (c >= 1) && (c <=4);
+}
+
+template <class TTokenStack, class TDoubleStack>
+bool Calculator<TTokenStack, TDoubleStack>::isNumber(char c)
 {
     return (c >= '0' && c <= '9');
 }
 
-template <class TCharStack, class TDoubleStack>
-bool Calculator<TCharStack, TDoubleStack>::isOpenBrace(char c)
+template <class TTokenStack, class TDoubleStack>
+bool Calculator<TTokenStack, TDoubleStack>::isNumberById(unsigned int c)
+{
+    return !c;
+}
+
+template <class TTokenStack, class TDoubleStack>
+bool Calculator<TTokenStack, TDoubleStack>::isOpenBrace(char c)
 {
     return (c == '(');
 }
 
-template <class TCharStack, class TDoubleStack>
-bool Calculator<TCharStack, TDoubleStack>::isCloseBrace(char c)
+template <class TTokenStack, class TDoubleStack>
+bool Calculator<TTokenStack, TDoubleStack>::isCloseBrace(char c)
 {
     return (c == ')');
 }
 
-template <class TCharStack, class TDoubleStack>
-int Calculator<TCharStack, TDoubleStack>::priority(char c)
+template <class TTokenStack, class TDoubleStack>
+int Calculator<TTokenStack, TDoubleStack>::priority(char c)
 {
     switch(c)
     {
@@ -217,6 +356,20 @@ int Calculator<TCharStack, TDoubleStack>::priority(char c)
 
         case '+': return 2;
         case '-': return 2;
+    }
+    return 0;
+}
+
+template <class TTokenStack, class TDoubleStack>
+int Calculator<TTokenStack, TDoubleStack>::priorityById(unsigned int c)
+{
+    switch(c)
+    {
+        case 3: return 3;
+        case 4: return 3;
+
+        case 1: return 2;
+        case 2: return 2;
     }
     return 0;
 }

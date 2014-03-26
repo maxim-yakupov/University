@@ -1,7 +1,9 @@
 TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
-CONFIG -= qt
+
+QT += core
+QT += testlib
 
 CONFIG += c++11
 
@@ -11,5 +13,7 @@ HEADERS += \
     stack.h \
     pointerstack.h \
     arraystack.h \
-    calculator.h
+    calculator.h \
+    testCalculator.h \
+    testStack.h
 

@@ -11,6 +11,7 @@ public:
     Type top() const;
     void pop();
     bool isEmpty() const;
+    void clear();
 private:
     struct StackElement
     {
@@ -34,10 +35,7 @@ PointerStack<Type>::PointerStack() : head(nullptr)
 template <class Type>
 PointerStack<Type>::~PointerStack()
 {
-    while (head)
-    {
-        pop();
-    }
+    clear();
 }
 
 template <class Type>
@@ -56,6 +54,7 @@ Type PointerStack<Type>::top() const
 template <class Type>
 void PointerStack<Type>::pop()
 {
+    if (!head) return;
     StackElement* newEl = head;
     head = newEl->prev;
     delete newEl;
@@ -65,4 +64,13 @@ template <class Type>
 bool PointerStack<Type>::isEmpty() const
 {
     return head;
+}
+
+template <class Type>
+void PointerStack<Type>::clear()
+{
+    while (head)
+    {
+        pop();
+    }
 }
