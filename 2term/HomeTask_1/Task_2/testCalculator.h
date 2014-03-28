@@ -10,26 +10,25 @@ class TestCalculator : public QObject
 public:
     explicit TestCalculator(QObject *parent = 0) : QObject(parent) {}
 private:
-    Calculator<ArrayStack<TokenStruct>, PointerStack<double>> *test;
+    Calculator<ArrayStack<TokenStruct>, PointerStack<double>> test;
     char* testStr;
 private slots:
     void initTestCase()
     {
-        test = new Calculator<ArrayStack<TokenStruct>, PointerStack<double>>;
+        Calculator<ArrayStack<TokenStruct>, PointerStack<double>> test;
     }
     void testComputeOfEmptyExpression()
     {
-        QCOMPARE(test->compute(), 0.0);
+        QCOMPARE(test.compute(), 0.0);
     }
     void init()
     {
-        testStr = new char[8];
-        testStr = "4+5.0\0";
+        testStr = new char[6]{'4', '+', '5', '.', '0', '\0'};
     }
     void testCompute()
     {
-        test->operator ()(testStr);
-        QCOMPARE(test->compute(), 9.0);
+        test(testStr);
+        QCOMPARE(test.compute(), 9.0);
     }
     void cleanup()
     {
@@ -37,6 +36,5 @@ private slots:
     }
     void cleanupTestCase()
     {
-        delete test;
     }
 };

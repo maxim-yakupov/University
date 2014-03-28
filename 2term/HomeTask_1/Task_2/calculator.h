@@ -101,7 +101,9 @@ void Calculator<TTokenStack, TDoubleStack>::operator()(char* inStr)
 template <class TTokenStack, class TDoubleStack>
 Calculator<TTokenStack, TDoubleStack>::Calculator()
 {
-    incomeStr = new char{'\0'};
+    incomeStr = new char[2];
+    incomeStr[0] = '0';
+    incomeStr[1] = '\0';
     polishInStack = new TTokenStack();
 }
 
