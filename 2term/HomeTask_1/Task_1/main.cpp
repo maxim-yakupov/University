@@ -2,11 +2,16 @@
 #include <unistd.h>//sleep
 #include "singlylinkedlist.h"
 #include "doublylinkedlist.h"
+#include "testList.h"
 
 using namespace std;
 
 int main()
 {
+    //test
+    TestList testList;
+    QTest::qExec(&testList);
+    //end test
     cout << "Wait a second";
     sleep(1);//for debug(sometimes occures mistake of debugger without sleep();)
     cout << "\b\b\b\b\b\b\b\b\b\b\b\b\b";

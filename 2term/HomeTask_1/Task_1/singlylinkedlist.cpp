@@ -74,6 +74,8 @@ void SinglyLinkedList::deletePos(int pos)
     {
         this->head = current->next;
         delete previous;
+        this->size--;
+        if (!this->size) this->head = nullptr;
         return;
     }
     while(current->next && (pos - 1))
@@ -93,4 +95,6 @@ void SinglyLinkedList::deletePos(int pos)
         previous->next = nullptr;
         delete current;
     }
+    this->size--;
+    if (!this->size) this->head = nullptr;
 }
