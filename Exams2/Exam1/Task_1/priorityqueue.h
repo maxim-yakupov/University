@@ -15,6 +15,7 @@ public:
      * @brief PriorityQueue Constructor of PriorityQueue, initialized empty
      */
     PriorityQueue();
+    ~PriorityQueue();
     /**
      * @brief enqueue Adds member in queue
      * @param value Value, which we add
@@ -41,6 +42,15 @@ private:
 template <class T>
 PriorityQueue<T>::PriorityQueue() : head(nullptr), length(0)
 {
+}
+
+template <class T>
+PriorityQueue<T>::~PriorityQueue()
+{
+    for (int i = 0; i < length; i++)
+    {
+        dequeue();
+    }
 }
 
 template <class T>
