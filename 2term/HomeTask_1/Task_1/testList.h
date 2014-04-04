@@ -15,7 +15,7 @@ private:
     DoublyLinkedList *dLList;
     SinglyLinkedList *sLList;
 private slots:
-    void initTestCase()
+    void init()
     {
         dLList = new DoublyLinkedList;
         sLList = new SinglyLinkedList;
@@ -74,7 +74,7 @@ private slots:
         sLList->deletePos(1);
         QCOMPARE(static_cast<int>(sLList->length()), 0);
     }
-    void cleanupTestCase()
+    void cleanup()
     {
         delete dLList;
         delete sLList;

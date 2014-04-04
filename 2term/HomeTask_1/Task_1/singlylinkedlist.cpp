@@ -96,5 +96,8 @@ void SinglyLinkedList::deletePos(int pos)
         delete current;
     }
     this->size--;
-    if (!this->size) this->head = nullptr;
+    if (!this->size)
+    {
+        this->head = nullptr;
+    }
 }
