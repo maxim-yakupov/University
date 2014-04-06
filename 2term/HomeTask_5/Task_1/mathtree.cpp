@@ -20,9 +20,19 @@ void MathTree::operator()(char *inStr)
     strExpr[pos] = '\0';
 
     delete root;
-    root = makeTree(strExpr);
+    root = nullptr;
+    curPos = 0;
+
+    root = makeTree(strExpr/*inStr*/);
 
     delete [] strExpr;
+}
+
+MathTree::MathTree()
+{
+    root = nullptr;
+    curPos = 0;
+    this->operator ()("0");
 }
 
 MathTree::MathTree(char *incomeExpr)

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "mathtree.h"
+#include "testMathTree.h"
 
 using namespace std;
 
@@ -8,6 +9,11 @@ bool getInFileInformation(ifstream &infile);
 
 int main()
 {
+    //test
+    TestMathTree testMathTree;
+    QTest::qExec(&testMathTree);
+    //end test
+
     ifstream infile;
     if (getInFileInformation(infile))
     {

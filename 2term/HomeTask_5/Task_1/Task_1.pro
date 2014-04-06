@@ -2,8 +2,8 @@ TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
 
-#QT += core \
-#    testlib
+QT += core \
+    testlib
 
 CONFIG += c++11
 
@@ -22,5 +22,6 @@ HEADERS += \
     sum.h \
     mult.h \
     sub.h \
-    num.h
+    num.h \
+    testMathTree.h
 

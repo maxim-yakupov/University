@@ -4,6 +4,10 @@
 class Num : public MathNode
 {
 public:
+    /**
+     * @brief Num Constructor
+     * @param v Number
+     */
     Num(double v);
     ~Num();
     double compute();
