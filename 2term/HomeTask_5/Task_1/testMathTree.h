@@ -23,8 +23,7 @@ private slots:
     }
     void testMTreeCompute()
     {
-        char* tStr = new char[20];
-        tStr = "(* (+ 1.2 3.3) 1.1)\0";
+        char* tStr = "(* (+ 1.2 3.3) 1.1)\0";
         tree->operator()(tStr);
         QCOMPARE(static_cast<double>(tree->compute()), 4.95);
         qDebug(tStr);

@@ -1,10 +1,8 @@
 #include "sub.h"
 #include <iostream>
 
-Sub::Sub(MathNode *l, MathNode *r)
+Sub::Sub(MathNode *l, MathNode *r) : MathNode(l, r)
 {
-    left = l;
-    right = r;
 }
 
 Sub::~Sub()

@@ -1,10 +1,8 @@
 #include "sum.h"
 #include <iostream>
 
-Sum::Sum(MathNode *l, MathNode *r)
+Sum::Sum(MathNode *l, MathNode *r) : MathNode(l, r)
 {
-    left = l;
-    right = r;
 }
 
 Sum::~Sum()

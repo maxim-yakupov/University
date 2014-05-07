@@ -1,10 +1,8 @@
 #include "div.h"
 #include <iostream>
 
-Div::Div(MathNode *l, MathNode *r)
+Div::Div(MathNode *l, MathNode *r) : MathNode(l, r)
 {
-    left = l;
-    right = r;
 }
 
 Div::~Div()

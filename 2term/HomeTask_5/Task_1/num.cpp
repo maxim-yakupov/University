@@ -1,10 +1,8 @@
 #include "num.h"
 #include <iostream>
 
-Num::Num(double v)
+Num::Num(double v) : MathNode(nullptr, nullptr)
 {
-    left = nullptr;
-    right = nullptr;
     value = v;
 }
 

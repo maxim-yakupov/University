@@ -1,10 +1,8 @@
 #include "mult.h"
 #include <iostream>
 
-Mult::Mult(MathNode *l, MathNode *r)
+Mult::Mult(MathNode *l, MathNode *r) : MathNode(l, r)
 {
-    left = l;
-    right = r;
 }
 
 Mult::~Mult()
