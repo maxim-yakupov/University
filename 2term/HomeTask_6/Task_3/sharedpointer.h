@@ -63,7 +63,8 @@ public:
     {
         if (sPtr->ptr != p.sPtr->ptr)
         {
-            if(counter())
+            sPtr->counter--;
+            if (!sPtr->counter)
             {
                 delete sPtr;
             }
