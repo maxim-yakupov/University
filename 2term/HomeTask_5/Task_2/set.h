@@ -23,19 +23,19 @@ public:
      * @param value Checking value
      * @return true if contains, false if not
      */
-    bool contains(T value);
+    bool contains(T value) const;
     /**
      * @brief intersectionSet Makes intersection of 2 sets
      * @param secondSet Another set
      * @return Set, consists with intersection of this & seconSet sets
      */
-    Set<T> intersectionSet(Set<T> secondSet);
+    Set<T> intersectionSet(const Set<T> &secondSet);
     /**
      * @brief unionSet Makes union of 2 sets
      * @param secondSet Another set
      * @return Set, consists with union of this & seconSet sets
      */
-    Set<T> unionSet(Set<T> secondSet);
+    Set<T> unionSet(const Set<T> &secondSet);
 private:
     QList<T> list;
 };
@@ -71,13 +71,13 @@ void Set<T>::remove(T value)
 }
 
 template<class T>
-bool Set<T>::contains(T value)
+bool Set<T>::contains(T value) const
 {
     return list.contains(value);
 }
 
 template<class T>
-Set<T> Set<T>::intersectionSet(Set<T> secondSet)
+Set<T> Set<T>::intersectionSet(const Set<T> &secondSet)
 {
     Set<T> resultSet;
     QListIterator<T> element(list);
@@ -96,7 +96,7 @@ Set<T> Set<T>::intersectionSet(Set<T> secondSet)
 }
 
 template<class T>
-Set<T> Set<T>::unionSet(Set<T> secondSet)
+Set<T> Set<T>::unionSet(const Set<T> &secondSet)
 {
     Set<T> resultSet = secondSet;
     QListIterator<T> element(list);
