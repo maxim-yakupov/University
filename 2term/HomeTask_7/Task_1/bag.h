@@ -23,25 +23,25 @@ public:
      * @param value Checking value
      * @return true if contains, false if not
      */
-    bool contains(T value);
+    bool contains(T value) const;
     /**
      * @brief quantityOfElement Returns quantity of element 'value' in Bag
      * @param value Element
      * @return Quantity of element 'value'
      */
-    unsigned int quantity(T value);
+    unsigned int quantity(T value) const;
     /**
      * @brief intersectionSet Makes intersection of 2 Bags
      * @param secondSet Another Bag
      * @return Set, consists with intersection of this & secondBag Bags
      */
-    Bag<T> intersectionBag(Bag<T> secondBag);
+    Bag<T> intersectionBag(const Bag<T> &secondBag);
     /**
      * @brief unionBag Makes union of 2 Bags
      * @param secondBag Another Bag
      * @return Set, consists with union of this & secondBag Bags
      */
-    Bag<T> unionBag(Bag<T> secondBag);
+    Bag<T> unionBag(const Bag<T> &secondBag);
 private:
     QMap<T, unsigned int> map;
 };
@@ -88,13 +88,13 @@ void Bag<T>::remove(T value)
 }
 
 template<class T>
-bool Bag<T>::contains(T value)
+bool Bag<T>::contains(T value) const
 {
     return map.contains(value);
 }
 
 template<class T>
-unsigned int Bag<T>::quantity(T value)
+unsigned int Bag<T>::quantity(T value) const
 {
     if (contains(value))
     {
@@ -107,7 +107,7 @@ unsigned int Bag<T>::quantity(T value)
 }
 
 template<class T>
-Bag<T> Bag<T>::intersectionBag(Bag<T> secondBag)
+Bag<T> Bag<T>::intersectionBag(const Bag<T> &secondBag)
 {
     Bag<T> resultBag;
     QMapIterator<T, unsigned int> element(map);
@@ -133,7 +133,7 @@ Bag<T> Bag<T>::intersectionBag(Bag<T> secondBag)
 }
 
 template<class T>
-Bag<T> Bag<T>::unionBag(Bag<T> secondBag)
+Bag<T> Bag<T>::unionBag(const Bag<T> &secondBag)
 {
     Bag<T> resultBag = secondBag;
     QMapIterator<T, unsigned int> element(map);
