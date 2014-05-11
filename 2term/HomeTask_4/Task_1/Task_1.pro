@@ -11,12 +11,14 @@ SOURCES += main.cpp \
     hashtable.cpp \
     list.cpp \
     singlylinkedlist.cpp \
-    uniquelist.cpp
+    uniquelist.cpp \
+    hashfunction.cpp
 
 HEADERS += \
     hashtable.h \
     list.h \
     singlylinkedlist.h \
     uniquelist.h \
-    testHashTable.h
+    testHashTable.h \
+    hashfunction.h
 

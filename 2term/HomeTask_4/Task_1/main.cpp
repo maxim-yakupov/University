@@ -4,6 +4,57 @@
 
 using namespace std;
 
+class HashX : public HashFunction
+{
+public:
+    int hash(const char *str)
+    {
+        int res = 0;
+        for (int i = 0; str[i]; i++)
+        {
+            res = (res * 3 - 100 + str[i] - '0') % 5;
+        };
+        return res;
+    }
+};
+
+class HashY : public HashFunction
+{
+public:
+    int hash(const char *str)
+    {
+        int res = 0;
+        for (int i = 0; str[i]; i++)
+        {
+            res = (res * 3 - 100 + str[i] - '0') % 3;
+        };
+        return res;
+    }
+};
+
+class HashZ : public HashFunction
+{
+public:
+    int hash(const char *str)
+    {
+        int res = 0;
+        for (int i = 0; str[i]; i++)
+        {
+            res = (res * 7 - 666 + str[i] - '0') % 1984;
+        };
+        return res;
+    }
+};
+
+class HashConst : public HashFunction
+{
+public:
+    int hash(const char *str)
+    {
+        return 1;
+    }
+};
+
 int main()
 {
     //test
@@ -15,6 +66,11 @@ int main()
     cout << "Write size of hash-table: ";
     cin >> size;
     HashTable ht(size);
+
+    HashX* hX = new HashX;
+    HashY* hY = new HashY;
+    HashZ* hZ = new HashZ;
+    HashConst* hConst = new HashConst;
 
     char command = '?';
     char* input = new char[500];
@@ -70,52 +126,22 @@ int main()
             cout << "Load-factor: " << ht.loadFactor() << endl;
             break;
         case 'c':
-            cout << "Choose hash-function('x', 'y', 'z')\n";
+            cout << "Choose hash-function('x', 'y', 'z', '1')\n";
             cout << "change_hash>> ";
             cin >> input;
             switch (*input)
             {
             case 'x':
-                ht(
-                            [](char* str)
-                            {
-                                int res = 0;
-                                while(str[0])
-                                {
-                                    res = (res * 3 - 100 + str[0] - '0') % 5;
-                                    str++;
-                                };
-                                return res;
-                            }
-                   );
+                ht(hX);
                 break;
             case 'y':
-                ht(
-                            [](char* str)
-                            {
-                                int res = 0;
-                                while(str[0])
-                                {
-                                    res = (res * 3 - 100 + str[0] - '0') % 3;
-                                    str++;
-                                };
-                                return res;
-                            }
-                   );
+                ht(hY);
                 break;
             case 'z':
-                ht(
-                            [](char* str)
-                            {
-                                int res = 0;
-                                while(str[0])
-                                {
-                                    res = (res * 7 - 666 + str[0] - '0') % 1984;
-                                    str++;
-                                };
-                                return res;
-                            }
-                   );
+                ht(hZ);
+                break;
+            case '1':
+                ht(hConst);
                 break;
             default:
                 break;

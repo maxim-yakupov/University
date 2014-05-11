@@ -5,6 +5,20 @@
 
 #include "hashtable.h"
 
+class TestHashFunction : public HashFunction
+{
+public:
+    int hash(const char *str)
+    {
+        int res = 0;
+        for (int i = 0; str[i]; i++)
+        {
+            res = (res * 3 - 100 + str[i] - '0') % 3;
+        };
+        return res;
+    }
+};
+
 class TestHashTable : public QObject
 {
     Q_OBJECT
@@ -114,18 +128,7 @@ private slots:
         QCOMPARE(table->operator []("5"), "5");
         QCOMPARE(table->operator []("egg"), "egg");
         QCOMPARE(table->operator []("char"), "char");
-        table->operator ()(
-                              [](char* str)
-                              {
-                                  int res = 0;
-                                  while(str[0])
-                                  {
-                                      res = (res * 3 - 100 + str[0] - '0') % 3;
-                                      str++;
-                                  };
-                                  return res;
-                              }
-                          );
+        table->operator ()(new TestHashFunction);
         QCOMPARE(table->operator []("1"), "1");
         QCOMPARE(table->operator []("2"), "2");
         QCOMPARE(table->operator []("3"), "3");

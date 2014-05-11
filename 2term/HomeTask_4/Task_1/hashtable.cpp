@@ -7,27 +7,20 @@ HashTable::HashTable(int lengthOfTable):tableSize(lengthOfTable)
     {
         table[i] = new UniqueList;
     }
-    hashFunc = [](char* str)
-    {
-        int res = 0;
-        while(str[0])
-        {
-            res = (res * 3 - 100 + str[0] - '0') % 5;
-            str++;
-        };
-        return res;
-    };
+    hashFunc = new HashFunction;
 }
 
 HashTable::~HashTable()
 {
+    delete hashFunc;
     for (unsigned int i = 0; i < tableSize; i++)
     {
         delete table[i];
     }
+    delete table;
 }
 
-void HashTable::add(char *str)
+void HashTable::add(const char *str)
 {
     table[hash(str)]->addValue(str);
 }
@@ -37,8 +30,9 @@ void HashTable::remove(char *str)
     table[hash(str)]->deleteValue(str);
 }
 
-void HashTable::operator()(int (*inputFunc)(char *))
+void HashTable::operator()(HashFunction* inputFunc)
 {
+    delete hashFunc;
     hashFunc = inputFunc;
     UniqueList** newTable = new UniqueList*[tableSize];
     for (unsigned int i = 0; i < tableSize; i++)
@@ -54,12 +48,16 @@ void HashTable::operator()(int (*inputFunc)(char *))
             table[i]->deleteValue(str);
         }
     }
+    for (unsigned int i = 0; i < tableSize; i++)
+    {
+        delete table[i];
+    }
     delete table;
     table = newTable;
     newTable = nullptr;
 }
 
-char *HashTable::operator[](char *str)//TODO: переделать под возвращение указателя UPD: или нет...
+const char *HashTable::operator[](char *str)//TODO: переделать под возвращение указателя UPD: или нет...
 {
     char* value = nullptr;
     if (table[hash(str)]->contains(str) && table[hash(str)]->contains(str)->counter)
@@ -74,9 +72,9 @@ unsigned int abs(int a)
     return ((a < 0) ? -a : a);
 }
 
-unsigned int HashTable::hash(char *str)
+unsigned int HashTable::hash(const char *str)
 {
-    return abs(hashFunc(str)) % tableSize;
+    return abs(hashFunc->hash(str)) % tableSize;
 }
 
 void HashTable::print()

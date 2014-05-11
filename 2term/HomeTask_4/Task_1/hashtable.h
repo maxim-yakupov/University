@@ -1,5 +1,6 @@
 #pragma once
 #include "uniquelist.h"
+#include "hashfunction.h"
 
 class HashTable
 {
@@ -11,7 +12,7 @@ public:
      * @detailed If counter >= 1 only increases counter for 1 point
      * @param str Adding string
      */
-    void add(char* str);
+    void add(const char* str);
     /**
      * @brief remove Removes string from hash-table
      * @detailed If counter >= 1 only decreases counter for 1 point
@@ -21,19 +22,19 @@ public:
     /**
      * @brief operator () Changes hash-function & rebuild hash-table with new function
      */
-    void operator()(int (*inputFunc)(char*));
+    void operator()(HashFunction* inputFunc);///!!!
     /**
      * @brief operator [] Returns pointer to C-string with searching value if it contains in hash-table
      * @param str Searching string
      * @return nullptr if not in hash-table or pointer to C-string
      */
-    char* operator[](char* str);
+    const char* operator[](char* str);
     /**
      * @brief hash Executes current hash-function with 'str' string as parameter
      * @param str String, which hash calculates
      * @return Current hash of 'str'
      */
-    unsigned int hash(char* str);
+    unsigned int hash(const char* str);
     /**
      * @brief print Prints hash-table
      */
@@ -66,5 +67,5 @@ public:
 private:
     UniqueList** table;
     unsigned int tableSize;
-    int (*hashFunc)(char*);
+    HashFunction* hashFunc;
 };

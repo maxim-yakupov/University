@@ -14,12 +14,12 @@ public:
      * @param value Value, that trying to find
      * @return Returns true if value in list, returns false if not
      */
-    ListElement *contains(char* value);
+    ListElement *contains(const char *value);
     /**
      * @brief addValue Adds value in list, if this value is not in the list
      * @param value Value, which trying to add
      */
-    void addValue(char* value);
+    void addValue(const char *value);
     /**
      * @brief deleteValue Deletes value from list, if this value is in the list
      * @param value Value, which trying to delete

@@ -5,7 +5,7 @@ UniqueList::UniqueList()
 {
 }
 
-List::ListElement* UniqueList::contains(char* value)
+List::ListElement* UniqueList::contains(const char* value)
 {
     if (!size) return nullptr;
     unsigned int pos = 0;
@@ -13,7 +13,7 @@ List::ListElement* UniqueList::contains(char* value)
     do
     {
         char* eValue = element->elemValue;
-        char* cValue = value;
+        const char* cValue = value;
         bool equal = (eValue[0] == cValue[0]);
         while (eValue[0] && equal)
         {
@@ -29,7 +29,7 @@ List::ListElement* UniqueList::contains(char* value)
     return nullptr;
 }
 
-void UniqueList::addValue(char* value)
+void UniqueList::addValue(const char* value)
 {
     ListElement* el = contains(value);
     if (!el)

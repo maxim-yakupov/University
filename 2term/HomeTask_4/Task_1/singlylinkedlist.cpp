@@ -18,18 +18,17 @@ SinglyLinkedList::~SinglyLinkedList()
     }
 }
 
-unsigned int strln(char* str)//0-byte also counts
+unsigned int strln(const char* str)//0-byte also counts
 {
     unsigned int counter = 0;
-    while (str[0])
+    for (int i = 0; str[i]; i++)
     {
         counter++;
-        str++;
     }
     return counter + 1;
 }
 
-char* copyStr(char* str)
+char* copyStr(const char* str)
 {
     unsigned int length = strln(str);
     char* newStr = new char[length];
@@ -40,9 +39,9 @@ char* copyStr(char* str)
     return newStr;
 }
 
-void SinglyLinkedList::addValue(char* value)
+void SinglyLinkedList::addValue(const char* value)
 {
-    value = copyStr(value);
+    char* valueCopy = copyStr(value);
     SLListElement* current = (SLListElement*)this->head;
     if (this->length())
     {
@@ -51,14 +50,14 @@ void SinglyLinkedList::addValue(char* value)
             current = (SLListElement*)current->next;
         }
         current->next = new SLListElement;
-        current->next->elemValue = value;
+        current->next->elemValue = valueCopy;
         current->next->counter = 1;
         current->next->next = nullptr;
     }
     else
     {
         this->head = new SLListElement;
-        this->head->elemValue = value;
+        this->head->elemValue = valueCopy;
         this->head->counter = 1;
         this->head->next = nullptr;
     }
