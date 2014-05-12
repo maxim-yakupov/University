@@ -153,7 +153,7 @@ int main()
         cout << "\nWrite command: ";
         cin >> command;
     }
-    delete input;
+    delete [] input;
     return 0;
 }
 
