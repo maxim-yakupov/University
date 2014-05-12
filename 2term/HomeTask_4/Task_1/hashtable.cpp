@@ -17,7 +17,7 @@ HashTable::~HashTable()
     {
         delete table[i];
     }
-    delete table;
+    delete [] table;
 }
 
 void HashTable::add(const char *str)
@@ -52,7 +52,7 @@ void HashTable::operator()(HashFunction* inputFunc)
     {
         delete table[i];
     }
-    delete table;
+    delete [] table;
     table = newTable;
     newTable = nullptr;
 }

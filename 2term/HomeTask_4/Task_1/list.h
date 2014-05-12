@@ -20,6 +20,10 @@ protected:
         char* elemValue;
         unsigned int counter;
         ListElement* next;
+        ~ListElement()
+        {
+            delete elemValue;
+        }
     };
     ListElement* head;
     unsigned int size;
