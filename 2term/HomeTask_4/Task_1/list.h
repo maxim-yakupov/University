@@ -22,7 +22,7 @@ protected:
         ListElement* next;
         ~ListElement()
         {
-            delete elemValue;
+            delete [] elemValue;
         }
     };
     ListElement* head;
