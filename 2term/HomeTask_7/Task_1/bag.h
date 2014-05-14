@@ -12,12 +12,12 @@ public:
      * @brief add Adds value to Bag
      * @param value Adding value
      */
-    void add(T value);
+    void add(const T &value);
     /**
      * @brief remove Removes value from Bag
      * @param value Removing value
      */
-    void remove(T value);
+    void remove(const T &value);
     /**
      * @brief contains Checks if value contains in Bag
      * @param value Checking value
@@ -59,7 +59,7 @@ Bag<T>::~Bag()
 }
 
 template<class T>
-void Bag<T>::add(T value)
+void Bag<T>::add(const T &value)
 {
     if (!contains(value))
     {
@@ -72,7 +72,7 @@ void Bag<T>::add(T value)
 }
 
 template<class T>
-void Bag<T>::remove(T value)
+void Bag<T>::remove(const T &value)
 {
     if (contains(value))
     {
