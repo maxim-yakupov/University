@@ -12,12 +12,12 @@ public:
      * @brief add Adds value to set
      * @param value Adding value
      */
-    void add(T value);
+    void add(const T &value);
     /**
      * @brief remove Removes value from set
      * @param value Removing value
      */
-    void remove(T value);
+    void remove(const T &value);
     /**
      * @brief contains Checks if value contains in set
      * @param value Checking value
@@ -53,7 +53,7 @@ Set<T>::~Set()
 }
 
 template<class T>
-void Set<T>::add(T value)
+void Set<T>::add(const T &value)
 {
     if (!contains(value))
     {
@@ -62,7 +62,7 @@ void Set<T>::add(T value)
 }
 
 template<class T>
-void Set<T>::remove(T value)
+void Set<T>::remove(const T &value)
 {
     if (contains(value))
     {
