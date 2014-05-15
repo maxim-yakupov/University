@@ -153,6 +153,10 @@ int main()
         cout << "\nWrite command: ";
         cin >> command;
     }
+    delete hX;
+    delete hY;
+    delete hZ;
+
     delete [] input;
     return 0;
 }
