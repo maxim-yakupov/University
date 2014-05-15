@@ -1,6 +1,5 @@
 #include <QtDebug>
 #include <QMessageBox>
-#include "time.h"
 #include "crossesandzeros.h"
 #include "ui_crossesandzeros.h"
 
@@ -10,9 +9,10 @@ CrossesAndZeros::CrossesAndZeros(QWidget *parent) :
     currentSize(0)
 {
     ui->setupUi(this);
-    generateField();
 
-    qsrand(time(nullptr));
+    logic = nullptr;
+
+    generateField();
 
     connect(ui->genButton, SIGNAL(clicked()), this, SLOT(generateField()));
 }
@@ -22,8 +22,15 @@ CrossesAndZeros::~CrossesAndZeros()
     delete ui;
 }
 
+void CrossesAndZeros::printTurn(unsigned int value)
+{
+    ui->turnLabel->setText(QString::number(value));
+}
+
 void CrossesAndZeros::generateField()
 {
+    qDebug("===generateField begins");
+    delete logic;
     const unsigned int newSize = ui->spinBox->value();
     for (unsigned int i = 0; i < currentSize; i++)
     {
@@ -44,156 +51,40 @@ void CrossesAndZeros::generateField()
 
             connect(button, SIGNAL(clicked()), this, SLOT(buttonClicked()));
 
-            field[button] = 0;
+            field[i * newSize + j] = button;
         }
     }
 
     currentSize = newSize;
-    turn = 0;
+    logic = new CrossesAndZerosLogic(this, currentSize);
+    connect(this, SIGNAL(playersTurnW(unsigned int)), logic, SLOT(playersTurn(unsigned int)));
+    connect(logic, SIGNAL(cellChanged(unsigned int, unsigned int, bool)),
+            this, SLOT(setButton(unsigned int,unsigned int,bool)));
+    connect(logic, SIGNAL(restart()), this, SLOT(generateField()));
+    connect(logic, SIGNAL(turnMade(unsigned int)), this, SLOT(printTurn(unsigned int)));
+    printTurn(0);
+    qDebug("===generateField ends");
+}
+
+void CrossesAndZeros::setButton(unsigned int pos, unsigned int player, bool enable)
+{
+    qDebug("setButton begins");
+    field[pos]->setEnabled(enable);
+    field[pos]->setText(player == 1 ? "X" : "0");
+    qDebug("setButton ends");
 }
 
 void CrossesAndZeros::buttonClicked()
 {
     qDebug("buttonClicked begins");
     QPushButton* button = qobject_cast<QPushButton*>(sender());
-    button->setEnabled(false);
-    button->setText("X");
-    field[button] = 1;
-    turn++;
-    qDebug("user button checked");
-    unsigned int pos = 0;
-    while (qobject_cast<QPushButton*>(ui->gridLayout->itemAtPosition(pos / currentSize, pos % currentSize)->widget()) != button)
+    unsigned int buttonPos = 0;
+    while (field[buttonPos] != button)
     {
-        qDebug("!");
-        pos++;
+        qDebug("bC!");
+        buttonPos++;
     }
-    qDebug("button choosen");
-    bool userWin = findWinner(pos, 1);
-    qDebug("win checked");
-    qDebug() << userWin;
-    if (!userWin && (currentSize * currentSize != turn))
-    {
-        qDebug("comps turn");
-        computersTurn();
-    }
-    else if (userWin)
-    {
-        QMessageBox::information(this, "Win!", "You win!");
-        generateField();
-    }
-    else
-    {
-        QMessageBox::information(this, "Draw!", "No one loose");
-        generateField();
-    }
+    setButton(buttonPos, 1, false);
+    emit playersTurnW(buttonPos);
     qDebug("buttonClicked ends");
-}
-
-bool CrossesAndZeros::isPart(int i, int j, unsigned int player)
-{
-    qDebug() << "isPart " << i << " " << j;
-    return ((i >= 0) && (i < static_cast<int>(currentSize))
-            && (j >= 0) && (j < static_cast<int>(currentSize))
-            && (field[qobject_cast<QPushButton*>(ui->gridLayout->itemAtPosition(i, j)->widget())] == player));
-}
-
-bool CrossesAndZeros::findWinner(unsigned int pos, unsigned int player)
-{
-    qDebug("findWinner begins");
-    bool win = false;
-    int i = pos / currentSize;
-    int j = pos % currentSize;
-    qDebug() << i << " " << j;
-    //vertical
-    if (isPart(i - 1, j, player))
-    {
-        if (isPart(i - 2, j, player) || isPart(i + 1, j, player))
-        {
-            win = true;
-        }
-    }
-    if (isPart(i + 1, j, player) && isPart(i + 2, j, player))
-    {
-        win = true;
-    }
-    //horisontal
-    if (isPart(i, j - 1, player))
-    {
-        if (isPart(i, j - 2, player) || isPart(i, j + 1, player))
-        {
-            win = true;
-        }
-    }
-    if (isPart(i, j + 1, player) && isPart(i, j + 2, player))
-    {
-        win = true;
-    }
-    //diag1
-    if (isPart(i - 1, j - 1, player))
-    {
-        if (isPart(i - 2, j - 2, player) || isPart(i + 1, j + 1, player))
-        {
-            win = true;
-        }
-    }
-    if (isPart(i + 1, j + 1, player) && isPart(i + 2, j + 2, player))
-    {
-        win = true;
-    }
-    //diag2
-    if (isPart(i - 1, j + 1, player))
-    {
-        if (isPart(i - 2, j + 2, player) || isPart(i + 1, j - 1, player))
-        {
-            win = true;
-        }
-    }
-    if (isPart(i + 1, j - 1, player) && isPart(i + 2, j - 2, player))
-    {
-        win = true;
-    }
-    qDebug("findWinner ends");
-    return win;
-}
-
-void CrossesAndZeros::computersTurn()
-{
-    qDebug("comps turn begins");
-    QPushButton* buttonForComputer = nullptr;
-    do
-    {
-        unsigned int i = qrand() % currentSize;
-        unsigned int j = qrand() % currentSize;
-        buttonForComputer = qobject_cast<QPushButton*>(ui->gridLayout->itemAtPosition(i, j)->widget());
-    } while (field[buttonForComputer]);
-    qDebug("button found");
-    qDebug() << field[buttonForComputer];
-    buttonForComputer->setEnabled(false);
-    buttonForComputer->setText("O");
-    field[buttonForComputer] = 2;
-    turn++;
-    unsigned int pos = 0;
-    while (qobject_cast<QPushButton*>(ui->gridLayout->itemAtPosition(pos / currentSize, pos % currentSize)->widget()) != buttonForComputer)
-    {
-        qDebug("!");
-        pos++;
-    }
-    qDebug("button choosen");
-    bool compWin = findWinner(pos, 2);
-    qDebug("win checked");
-    qDebug() << compWin;
-    if (!compWin && (currentSize * currentSize != turn))
-    {
-    }
-    else if (compWin)
-    {
-        QMessageBox::information(this, "Loose!", "Computer win!");
-        generateField();
-    }
-    else
-    {
-        QMessageBox::information(this, "Draw!", "No one loose");
-        generateField();
-    }
-    qDebug("comps turn ends");
 }

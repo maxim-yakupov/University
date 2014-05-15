@@ -14,10 +14,13 @@ TEMPLATE = app
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    crossesandzeros.cpp
+    crossesandzeros.cpp \
+    crossesandzeroslogic.cpp
 
 HEADERS  += \
-    crossesandzeros.h
+    crossesandzeros.h \
+    crossesandzeroslogic.h
 
 FORMS    += \
-    crossesandzeros.ui
+    crossesandzeros.ui \
+    crossesandzeroslogic.ui
