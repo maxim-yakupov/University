@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui testlib
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -15,11 +15,14 @@ CONFIG += c++11
 
 SOURCES += main.cpp \
     crossesandzeros.cpp \
-    crossesandzeroslogic.cpp
+    crossesandzeroslogic.cpp \
+    crossesandzeroslogicpv.cpp
 
 HEADERS  += \
     crossesandzeros.h \
-    crossesandzeroslogic.h
+    crossesandzeroslogic.h \
+    testCrossesAndZerosLogic.h \
+    crossesandzeroslogicpv.h
 
 FORMS    += \
     crossesandzeros.ui \
