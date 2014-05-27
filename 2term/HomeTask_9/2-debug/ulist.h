@@ -3,11 +3,10 @@
 
 class AddingExistingItem {};
 
-class RemovingExistingItem {};
+class RemovingNotExistingItem {};
 
 class UList : public PList
 {
-public:
 public:
     UList();
     ~UList();
@@ -20,12 +19,4 @@ public:
     void swap(int i, int j);
     bool exist(int value);
     void delValue(int value);
-
-private:
-    struct Node
-    {
-        int value;
-        Node *next;
-    };
-    Node *head;
 };

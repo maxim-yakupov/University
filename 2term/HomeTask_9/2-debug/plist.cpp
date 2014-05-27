@@ -3,122 +3,125 @@
 
 PList::PList()
 {
+    head = new Node;
+    head->next = NULL;
+    head->value = 0;
 }
 
 PList::~PList()
 {
-	removeList();
-	delete head;
+    removeList();
+    delete head;
 }
 
 int PList::length()
 {
-	return head->value;
+    return head->value;
 }
 
 void PList::add(int value, int num)
 {
-	if (num <= head->value)
-		{
-			int k = 1;
-			Node *tmp = head;
-			while (k < num)
-			{
-				tmp = tmp->next;
-				k++;
-			}
-			Node *tmp2 = new Node;
-			tmp2->value = value;
-			tmp2->next = tmp->next->next;
-			tmp->next->next = tmp2;
-			k++;
-		}
-	else
-		{
-			Node *tmp = head;
-			while (tmp->next)
-			{
-				tmp = tmp->next;
-			}
-			Node *tmp2 = new Node;
-			tmp2->value = value;
-			tmp2->next = tmp->next;
-			tmp->next = tmp2;
-		}
+    if (num <= head->value)
+        {
+            int counter = 1;
+            Node *prevNode = head;
+            while (counter < num)
+            {
+                prevNode = prevNode->next;
+                counter++;
+            }
+            Node *addingNode = new Node;
+            addingNode->value = value;
+            addingNode->next = prevNode->next;
+            prevNode->next = addingNode;
+            head->value++;
+        }
+    else
+        {
+            Node *prevNode = head;
+            while (prevNode->next)
+            {
+                prevNode = prevNode->next;
+            }
+            Node *addingNode = new Node;
+            addingNode->value = value;
+            addingNode->next = prevNode->next;
+            prevNode->next = addingNode;
+            head->value++;
+        }
 }
 
 void PList::del(int num)
 {
-	if ((num <= head->value) && (num > 0))
-		{
-			int k = 1;
-			Node *tmp = head;
-			while (k < num)
-			{
-				tmp = tmp->next;
-				k++;
-			}
-			Node *tmp2 = tmp->next;
-			tmp->next = tmp->next->next;
-			delete tmp2;
-			head->value--;
-		}
+    if ((num <= head->value) && (num > 0))
+        {
+            int counter = 1;
+            Node *prevNode = head;
+            while (counter < num)
+            {
+                prevNode = prevNode->next;
+                counter++;
+            }
+            Node *addingNode = prevNode->next;
+            prevNode->next = prevNode->next->next;
+            delete addingNode;
+            head->value--;
+        }
 }
 
 void PList::removeList()
 {
-	while (head->next == NULL)
-		del(1);
-	head->value = 0;
+    while (head->next)
+        del(1);
 }
 
 int PList::returnValue(int num)
 {
-	if ((num <= head->value) && (num > 0))
-	{
-		int k = 1;
-		Node *tmp = head;
-		while (k < num)
-		{
-			tmp = tmp->next;
-			k++;
-		}
-		return tmp->next->next->value;
-	}
-	else
-		return -32000;
+    if ((num <= head->value) && (num > 0))
+    {
+        int counter = 1;
+        Node *prevNode = head;
+        while (counter < num)
+        {
+            prevNode = prevNode->next;
+            counter++;
+        }
+        return prevNode->next->value;
+    }
+    else
+        return -32000;
 }
 
 void PList::printList()
 {
-	Node *tmp = head;
-	while(tmp->next)
-	{
-		tmp = tmp->next;
-		printf("%i ", tmp->value);
-	}
+    Node *currentNode = head;
+    while(currentNode->next)
+    {
+        currentNode = currentNode->next;
+        printf("%i ", currentNode->value);
+    }
 }
 
 void PList::swap(int i, int j)
 {
-	if ((i <= head->value) && (i > 0) && (j <= head->value) && (j > 0))
-	{
-		int k = 1;
-		Node *tmp = head;
-		while (k <= i)
-		{
-			tmp = tmp->next;
-			k++;
-		}
-		k = 1;
-		Node *tmp2 = head;
-		while (k < j)
-		{
-			tmp2 = tmp2->next;
-			k++;
-		}
-		int a = tmp->next->value;
-		tmp->next->value = tmp2->next->value;
-		tmp2->next->value = a;
-	}
+    if ((i <= head->value) && (i > 0) && (j <= head->value) && (j > 0))
+    {
+        int counter = 1;
+        Node *firstPrevNode = head;
+        while (counter < i)
+        {
+            firstPrevNode = firstPrevNode->next;
+            counter++;
+        }
+        counter = 1;
+        Node *secondPrevNode = head;
+        while (counter < j)
+        {
+            secondPrevNode = secondPrevNode->next;
+            counter++;
+        }
+        int a = firstPrevNode->next->value;
+        firstPrevNode->next->value = secondPrevNode->next->value;
+        secondPrevNode->next->value = a;
+    }
 }

@@ -2,15 +2,10 @@
 
 UList::UList()
 {
-    head = new Node;
-    head->value = 0;
-    head->next = NULL;
 }
 
 UList::~UList()
 {
-    removeList();
-    delete head;
 }
 
 int UList::length()
@@ -21,14 +16,12 @@ int UList::length()
 void UList::add(int value, int num)
 {
     if (!exist(value))
+    {
         PList::add(value, num);
+    }
     else
     {
-        try
-        {
-            throw AddingExistingItem();
-        }
-        catch(AddingExistingItem) {}
+        throw AddingExistingItem();
     }
 }
 
@@ -59,11 +52,11 @@ void UList::swap(int i, int j)
 
 bool UList::exist(int value)
 {
-    Node *tmp = head;
-    while(tmp->next)
+    Node *prevNode = head;
+    while(prevNode->next)
     {
-        tmp = tmp->next;
-        if (tmp->value == value)
+        prevNode = prevNode->next;
+        if (prevNode->value == value)
             return true;
     }
     return false;
@@ -73,22 +66,17 @@ void UList::delValue(int value)
 {
     if (exist(value))
     {
-        Node *tmp = head;
-        while (tmp->next->value != value)
+        Node *prevNode = head;
+        while (prevNode->next->value != value)
         {
-            tmp = tmp->next;
+            prevNode = prevNode->next;
         }
-        Node *tmp2 = tmp->next;
-        tmp->next = tmp2->next;
-        delete tmp2;
+        Node *deletingNode = prevNode->next;
+        prevNode->next = deletingNode->next;
+        delete deletingNode;
     }
     else
     {
-        try
-        {
-            throw RemovingExistingItem();
-        }
-        catch(RemovingExistingItem) {}
+        throw RemovingNotExistingItem();
     }
-
 }
