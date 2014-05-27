@@ -57,7 +57,9 @@ bool UList::exist(int value)
     {
         prevNode = prevNode->next;
         if (prevNode->value == value)
+        {
             return true;
+        }
     }
     return false;
 }

@@ -22,57 +22,59 @@ int PList::length()
 void PList::add(int value, int num)
 {
     if (num <= head->value)
+    {
+        int counter = 1;
+        Node *prevNode = head;
+        while (counter < num)
         {
-            int counter = 1;
-            Node *prevNode = head;
-            while (counter < num)
-            {
-                prevNode = prevNode->next;
-                counter++;
-            }
-            Node *addingNode = new Node;
-            addingNode->value = value;
-            addingNode->next = prevNode->next;
-            prevNode->next = addingNode;
-            head->value++;
+            prevNode = prevNode->next;
+            counter++;
         }
+        Node *addingNode = new Node;
+        addingNode->value = value;
+        addingNode->next = prevNode->next;
+        prevNode->next = addingNode;
+        head->value++;
+    }
     else
+    {
+        Node *prevNode = head;
+        while (prevNode->next)
         {
-            Node *prevNode = head;
-            while (prevNode->next)
-            {
-                prevNode = prevNode->next;
-            }
-            Node *addingNode = new Node;
-            addingNode->value = value;
-            addingNode->next = prevNode->next;
-            prevNode->next = addingNode;
-            head->value++;
+            prevNode = prevNode->next;
         }
+        Node *addingNode = new Node;
+        addingNode->value = value;
+        addingNode->next = prevNode->next;
+        prevNode->next = addingNode;
+        head->value++;
+    }
 }
 
 void PList::del(int num)
 {
     if ((num <= head->value) && (num > 0))
+    {
+        int counter = 1;
+        Node *prevNode = head;
+        while (counter < num)
         {
-            int counter = 1;
-            Node *prevNode = head;
-            while (counter < num)
-            {
-                prevNode = prevNode->next;
-                counter++;
-            }
-            Node *addingNode = prevNode->next;
-            prevNode->next = prevNode->next->next;
-            delete addingNode;
-            head->value--;
+            prevNode = prevNode->next;
+            counter++;
         }
+        Node *addingNode = prevNode->next;
+        prevNode->next = prevNode->next->next;
+        delete addingNode;
+        head->value--;
+    }
 }
 
 void PList::removeList()
 {
     while (head->next)
+    {
         del(1);
+    }
 }
 
 int PList::returnValue(int num)
@@ -89,7 +91,9 @@ int PList::returnValue(int num)
         return prevNode->next->value;
     }
     else
+    {
         return -32000;
+    }
 }
 
 void PList::printList()
