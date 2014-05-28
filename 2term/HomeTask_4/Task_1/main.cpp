@@ -67,11 +67,6 @@ int main()
     cin >> size;
     HashTable ht(size);
 
-    HashX* hX = new HashX;
-    HashY* hY = new HashY;
-    HashZ* hZ = new HashZ;
-    HashConst* hConst = new HashConst;
-
     char command = '?';
     char* input = new char[500];
     while (command != 'q')
@@ -132,16 +127,16 @@ int main()
             switch (*input)
             {
             case 'x':
-                ht(hX);
+                ht(new HashX);
                 break;
             case 'y':
-                ht(hY);
+                ht(new HashY);
                 break;
             case 'z':
-                ht(hZ);
+                ht(new HashZ);
                 break;
             case '1':
-                ht(hConst);
+                ht(new HashConst);
                 break;
             default:
                 break;
@@ -153,9 +148,6 @@ int main()
         cout << "\nWrite command: ";
         cin >> command;
     }
-    delete hX;
-    delete hY;
-    delete hZ;
 
     delete [] input;
     return 0;
