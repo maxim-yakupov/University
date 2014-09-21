@@ -1,1 +1,0 @@
-java -classpath .\out\production\1 yakupov.Main
