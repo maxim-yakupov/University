@@ -8,6 +8,7 @@ public class Main {
     public static void main(String[] args) {
         List list = new List();
         System.out.println("[**************************************]\n" +
+                "result will be shown on screen & written in 'output.txt'\n" +
                 "enter source(1 - console, 0 - from file)");
 
         BufferedReader buffered_reader = new BufferedReader(
@@ -17,9 +18,16 @@ public class Main {
         char ch = readOneSymbol(buffered_reader);
 
         try {
-            buffered_reader.skip(1); // avoid reading extra '\n'
+            /**
+             * @deprecated Tried to avoid of reading extra 'line-ending symbols', but it depends on OS.
+             * So this code
+             * <code>System.out.println("skipped:" + buffered_reader.skip(1)); // avoid reading extra '\n'</code>
+             * can be improved by using constant variable.
+             */
+            //System.out.println("skipped:" + buffered_reader.skip(1)); // avoid reading extra '\n'
+            buffered_reader.readLine(); // avoid reading extra symbols in string
         } catch (IOException e) {
-            System.out.println("skip problem");
+            System.out.println("skipping problem");
         }
 
         if (ch == '1') {
@@ -37,7 +45,7 @@ public class Main {
                             )
                     ));
                     System.out.println("{********-------opened---------********}");
-
+                    System.out.println(path);
                     System.out.println("{********--------output--------********}");
                     list.print();
 
@@ -61,7 +69,7 @@ public class Main {
                                 System.getProperty("user.dir") + File.separatorChar + "output.txt")
                 );
             } catch (FileNotFoundException e) {
-                System.out.println("output file not found!");
+                System.out.println("output file trouble");
             }
 
             System.setOut(pstr);
