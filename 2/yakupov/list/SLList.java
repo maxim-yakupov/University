@@ -131,5 +131,7 @@ public class SLList {
      * Returns length of the list
      * @return Length of list
      */
-    public int getLength() { return this.length; }
+    public int getLength() {
+        return this.length;
+    }
 }
