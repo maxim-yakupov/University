@@ -1,12 +1,13 @@
 package yakupov;
 
 import java.io.*;
-import yakupov.list.List;
 
 public class Main {
 
     public static void main(String[] args) {
-        List list = new List();
+        System.out.println(test_reverseString() ? "Test passed" : "Test FAILED");
+
+        StringBuilder str = new StringBuilder();
         System.out.println("[**************************************]\n" +
                 "result will be shown on screen & written in 'output.txt'\n" +
                 "enter source(1 - console, 0 - from file)");
@@ -32,14 +33,14 @@ public class Main {
 
         if (ch == '1') {
             System.out.println("[********--------input---------********]");
-            readListOfSymbols(list, buffered_reader);
+            readListOfSymbols(str, buffered_reader);
         } else if (ch == '0') {
             try {
                 System.out.print("write file name: ");
 
                 String path = buffered_reader.readLine();
                 try {
-                    readListOfSymbols(list, new BufferedReader(
+                    readListOfSymbols(str, new BufferedReader(
                             new InputStreamReader(
                                     new FileInputStream(path)
                             )
@@ -47,7 +48,7 @@ public class Main {
                     System.out.println("{********-------opened---------********}");
                     System.out.println(path);
                     System.out.println("{********--------output--------********}");
-                    list.print();
+                    System.out.println(str.toString());
 
                     System.out.println();
                 } catch (FileNotFoundException e) {
@@ -58,7 +59,7 @@ public class Main {
             }
 
         }
-        if (!list.isNull()) {
+        if (str.length() != 0) {
             System.out.println("[********----reverse-output----********]");
             //
             PrintStream stdOut = System.out;
@@ -72,13 +73,44 @@ public class Main {
                 System.out.println("output file trouble");
             }
 
-            System.setOut(pstr);
-            list.printReverse();
-            System.setOut(stdOut);
-            //
-            list.printReverse();
+            reverseString(str);
+
+            if (pstr != null) {
+                System.setOut(pstr);
+                System.out.print(str.toString());
+                System.setOut(stdOut);
+            }
+            System.out.print(str.toString());
+
         }
         System.out.println("\n[**************************************]");
+    }
+
+    /**
+     * Test
+     * @return 'true' if passed, 'false' if failed
+     */
+    private static boolean test_reverseString() {
+        boolean success = true;
+        StringBuilder str = new StringBuilder("123456789");
+
+        reverseString(str);
+
+        for (int i = 0; i < str.length(); i++) {
+            if (str.toString().charAt(i) != ((char) ((int) '0') + 9 - i)) {
+                success = false;
+                break;
+            }
+        }
+        return success;
+    }
+
+    /**
+     * Reverses string 'str'
+     * @param str String for reverse
+     */
+    private static void reverseString(StringBuilder str) {
+        str.reverse();
     }
 
     /**
@@ -100,10 +132,10 @@ public class Main {
 
     /**
      * Reads string into list until '  ' occurs
-     * @param list List, in which we read
+     * @param str String, in which we read
      * @param buffered_reader BufferedReader of input stream
      */
-    private static void readListOfSymbols(List list, BufferedReader buffered_reader) {
+    private static void readListOfSymbols(StringBuilder str, BufferedReader buffered_reader) {
         char ch = readOneSymbol(buffered_reader);
         while (true) {
             if (ch == ' ') {
@@ -111,10 +143,10 @@ public class Main {
                 if (temp == ' ') {
                     break;
                 }
-                list.insert(ch);
+                str.append(ch);
                 ch = temp;
             }
-            list.insert(ch);
+            str.append(ch);
             ch = readOneSymbol(buffered_reader);
         }
     }
