@@ -1,19 +1,12 @@
 package yakupov;
 
 import java.io.*;
-import yakupov.list.SLList;
-import yakupov.list.WrongIndexException;
+import yakupov.list.List;
 
 public class Main {
 
     public static void main(String[] args) {
-        try {
-            System.out.println(test_reverseList() ? "Test passed" : "Test FAILED");
-        } catch (WrongIndexException e) {
-            System.err.println("WrongIndexException in test_reverseList()");
-        }
-
-        SLList list = new SLList();
+        List list = new List();
         System.out.println("[**************************************]\n" +
                 "result will be shown on screen & written in 'output.txt'\n" +
                 "enter source(1 - console, 0 - from file)");
@@ -34,7 +27,7 @@ public class Main {
             //System.out.println("skipped:" + buffered_reader.skip(1)); // avoid reading extra '\n'
             buffered_reader.readLine(); // avoid reading extra symbols in string
         } catch (IOException e) {
-            System.err.println("skipping problem");
+            System.out.println("skipping problem");
         }
 
         if (ch == '1') {
@@ -58,10 +51,10 @@ public class Main {
 
                     System.out.println();
                 } catch (FileNotFoundException e) {
-                    System.err.println(path + ":file not found");
+                    System.out.println(path + ":file not found");
                 }
             } catch (IOException e) {
-                System.err.println("Somethings goes wrong with file opening");
+                System.out.println("Somethings goes wrong with file opening");
             }
 
         }
@@ -79,55 +72,13 @@ public class Main {
                 System.out.println("output file trouble");
             }
 
-            reverseList(list); //!!! that's what we should do
-            if (pstr != null) {
-                System.setOut(pstr);
-                list.print();
-                System.setOut(stdOut);
-            }
-            list.print();
+            System.setOut(pstr);
+            list.printReverse();
+            System.setOut(stdOut);
+            //
+            list.printReverse();
         }
         System.out.println("\n[**************************************]");
-    }
-
-    /**
-     * Test
-     * @return 'true' if passed, 'false' if failed
-     * @throws WrongIndexException When function requests element out of range
-     */
-    private static boolean test_reverseList() throws WrongIndexException {
-        boolean success = true;
-        SLList list = new SLList();
-        list.insert('0');
-        list.insert('1');
-        list.insert('2');
-        list.insert('3');
-        list.insert('4');
-
-        reverseList(list);
-
-        for (int i = 0; i < list.getLength(); i++) {
-            if (list.value(i) != ((char) ((int) '0') + 4 - i)) {
-                success = false;
-                break;
-            }
-        }
-        return success;
-    }
-
-    /**
-     * Reverses list
-     * @param list List, which we turn over
-     */
-    private static void reverseList(SLList list) {
-        for (int i = 1; i < list.getLength(); i++) {
-            try {
-                list.insertInBeginning(list.value(i));
-                list.remove(i + 1);
-            } catch (WrongIndexException e){
-                System.err.println("WrongIndexException in reverseList()");
-            }
-        }
     }
 
     /**
@@ -152,9 +103,17 @@ public class Main {
      * @param list List, in which we read
      * @param buffered_reader BufferedReader of input stream
      */
-    private static void readListOfSymbols(SLList list, BufferedReader buffered_reader) {
+    private static void readListOfSymbols(List list, BufferedReader buffered_reader) {
         char ch = readOneSymbol(buffered_reader);
-        while (ch != '\n' && ch != ((char) -1)) {
+        while (true) {
+            if (ch == ' ') {
+                char temp = readOneSymbol(buffered_reader);
+                if (temp == ' ') {
+                    break;
+                }
+                list.insert(ch);
+                ch = temp;
+            }
             list.insert(ch);
             ch = readOneSymbol(buffered_reader);
         }
