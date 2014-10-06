@@ -92,6 +92,8 @@ public class Main {
 
     /**
      * Test
+     * @return 'true' if passed, 'false' if failed
+     * @throws WrongIndexException When function requests element out of range
      */
     private static boolean test_reverseList() throws WrongIndexException {
         boolean success = true;
