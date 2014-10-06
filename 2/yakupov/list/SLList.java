@@ -1,7 +1,7 @@
 package yakupov.list;
 
 /**
- * Class 'List' - implements basic singly-linked list's abilities
+ * Class 'SLList' - implements basic singly-linked list's abilities
  * @author     Yakupov Maxim
  * @version    1.0
  * @since      JDK1.8
