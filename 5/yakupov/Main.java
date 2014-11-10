@@ -7,10 +7,11 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static long timer(Matrix m1, Matrix m2) {
+    public static long timer(Matrix m1, Matrix m2, boolean tr) {
         long st, en;
         st = System.nanoTime();
-        Matrix.multi(m1, m2);//----
+        if (tr) Matrix.multiTransp(m1, m2);
+        else    Matrix.multi(m1, m2);//----
         en = System.nanoTime();
         return en-st;
     }
@@ -40,16 +41,16 @@ public class Main {
             for (int j = 0; j < n; j++){
                 m2.set(i, j, myScanner.nextDouble());
             }
-        System.out.println("First run: " + timer(m1, m2) + "ns");
+        System.out.println("First run: " + timer(m1, m2, false) + "ns");
 
         writeMatrix(Matrix.multi(m1, m2), myPrintWriter);
 
-        m1.tranponent();
+//        m1.tranponent();
         m2.tranponent();
 
-        System.out.println("Second run: " + timer(m1, m2) + "ns");
+        System.out.println("Second run: " + timer(m1, m2, true) + "ns");
 
-        writeMatrix(Matrix.multi(m1, m2), myPrintWriter);
+        writeMatrix(Matrix.multiTransp(m1, m2), myPrintWriter);
 
         myPrintWriter.close();
     }

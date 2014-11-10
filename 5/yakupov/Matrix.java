@@ -103,4 +103,23 @@ public class Matrix {
             }
         a = T;
     }
+    ////
+    public static Matrix multiTransp(Matrix m1, Matrix tr) {
+        int hRes = m1.getH();
+        int wRes = tr.getW();
+
+        if (m1.getW() != tr.getH()) {
+            System.err.println("Can't do multiplication cause of bad sizes");
+            return new Matrix(1, 1);
+        }
+
+        int count = m1.getW();
+        Matrix res = new Matrix(hRes, wRes);
+        for (int i = 0; i < hRes; i++)
+            for (int j = 0; j < wRes; j++)
+                for (int k = 0; k < count; k++) {
+                    res.set(i, j, res.get(i, j) + m1.get(i, k) * tr.get(j, k));
+                }
+        return res;
+    }
 }
