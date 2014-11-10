@@ -102,9 +102,75 @@ public class Main {
 
         bitReverse(a);
 
-        if (a[0] != '3' || a[1] != '2' || a[2] != '1' || a[3] != '0') {
+        if (a[0] != '0' ||     //00
+                a[1] != '2' || //01
+                a[2] != '1' || //10
+                a[3] != '3') { //11
             success = false;
         }
+
+        char[] b = new char[8];
+        b[0] = '0';
+        b[1] = '1';
+        b[2] = '2';
+        b[3] = '3';
+        b[4] = '4';
+        b[5] = '5';
+        b[6] = '6';
+        b[7] = '7';
+
+        bitReverse(b);
+
+        if (b[0] != '0' ||     //000
+                b[1] != '4' || //001
+                b[2] != '2' || //010
+                b[3] != '6' || //011
+                b[4] != '1' || //100
+                b[5] != '5' || //101
+                b[6] != '3' || //110
+                b[7] != '7') { //111
+            success = false;
+        }
+
+        char[] c = new char[16];
+        c[0] = '0';
+        c[1] = '1';
+        c[2] = '2';
+        c[3] = '3';
+        c[4] = '4';
+        c[5] = '5';
+        c[6] = '6';
+        c[7] = '7';
+        c[8] = '8';
+        c[9] = '9';
+        c[10] = 'a';
+        c[11] = 'b';
+        c[12] = 'c';
+        c[13] = 'd';
+        c[14] = 'e';
+        c[15] = 'f';
+
+        bitReverse(c);
+
+        if (c[0] != '0' ||      //0000
+                c[1] != '8' ||  //0001
+                c[2] != '4' ||  //0010
+                c[3] != 'c' ||  //0011
+                c[4] != '2' ||  //0100
+                c[5] != 'a' ||  //0101
+                c[6] != '6' ||  //0110
+                c[7] != 'e' ||  //0111
+                c[8] != '1' ||  //1000
+                c[9] != '9' ||  //1001
+                c[10] != '5' || //1010
+                c[11] != 'd' || //1011
+                c[12] != '3' || //1100
+                c[13] != 'b' || //1101
+                c[14] != '7' || //1110
+                c[15] != 'f') { //1111
+            success = false;
+        }
+
         return success;
     }
 
@@ -121,13 +187,30 @@ public class Main {
     }
 
     /**
-     * Swaps array[i] and array[~i]
+     * Swaps array[a1a2...an] and array[ana(n-1)...a1]
      * @param array Array, which we changing
      */
     private static void bitReverse(char[] array) {
-        for (int i = 0; i < array.length / 2; i++) {
-            int j = ~i&(array.length - 1);
-            swap(array, i, j);
+        //n - number of bits for code element's index
+        int n = (int) (
+                Math.log((double) array.length)
+                /
+                Math.log(2.0)
+        );
+        for (int i = 0; i < array.length; i++) {
+            int j = 0;
+            int curBit;
+            for (int k = 0; k < n; k++) {
+                curBit = 0;
+                if ((i&((int) Math.pow(2.0, ((double) k)))) != 0) {
+                    curBit = 1;
+                }
+                j = j * 2 + curBit;
+            }
+            //for not swapping back
+            if (i < j) {
+                swap(array, i, j);
+            }
         }
     }
 
