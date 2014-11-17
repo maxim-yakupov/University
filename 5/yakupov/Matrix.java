@@ -99,12 +99,21 @@ public class Matrix {
         double[] T = new double[getH() * getW()];
         for (int i = 0; i < getH(); i++)
             for (int j = 0; j < getW(); j++) {
-                T[ind(j, i)] = a[ind(i, j)];
+                T[j * h + i] = a[ind(i, j)];
             }
         a = T;
+        h = w + h;
+        w = h - w;
+        h = h - w;
     }
-    ////
-    public static Matrix multiTransp(Matrix m1, Matrix tr) {
+
+    /**
+     * Multiply two matrixes[second matrix transponented](static member)
+     * @param m1 First matrix
+     * @param tr Second matrix(transponent)
+     * @return Result matrix
+     */
+    public static Matrix multiSecondTransp(Matrix m1, Matrix tr) {
         int hRes = m1.getH();
         int wRes = tr.getW();
 
