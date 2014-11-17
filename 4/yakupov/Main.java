@@ -194,20 +194,22 @@ public class Main {
         //n - number of bits for code element's index
         int n = (int) (
                 Math.log((double) array.length)
-                /
+                        /
                 Math.log(2.0)
         );
         for (int i = 0; i < array.length; i++) {
+            //temporary variable for current index
+            int temp = i;
+            //new index, which we calculating
             int j = 0;
-            int curBit;
             for (int k = 0; k < n; k++) {
-                curBit = 0;
-                if ((i&((int) Math.pow(2.0, ((double) k)))) != 0) {
-                    curBit = 1;
-                }
-                j = j * 2 + curBit;
+                //curBit - the most right bit of 'temp'
+                int curBit = temp & 1;
+                //add 'curBit' to the right of 'j'
+                j = (j << 1) | curBit;
+                //make right shift of 'temp' for 1 bit
+                temp >>= 1;
             }
-            //for not swapping back
             if (i < j) {
                 swap(array, i, j);
             }
