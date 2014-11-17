@@ -12,7 +12,7 @@ public class SLList {
      * Class 'Element' - describes element of the doubly-linked list
      * @version 1.0
      */
-    private class Element {
+    public class Element {
         char value;
         Element next;
 
@@ -23,6 +23,17 @@ public class SLList {
         Element(char value) {
             this.value = value;
             this.next = null;
+        }
+    }
+
+    public void reverse() {
+        Element prev = null;
+        Element next = this.begin;
+        while (next != null) {
+            this.begin = next;
+            next = this.begin.next;
+            this.begin.next = prev;
+            prev = this.begin;
         }
     }
 

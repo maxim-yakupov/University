@@ -79,7 +79,7 @@ public class Main {
                 System.out.println("output file trouble");
             }
 
-            reverseList(list); //!!! that's what we should do
+            list.reverse(); //!!! that's what we should do
             if (pstr != null) {
                 System.setOut(pstr);
                 list.print();
@@ -104,7 +104,7 @@ public class Main {
         list.insert('3');
         list.insert('4');
 
-        reverseList(list);
+        list.reverse();
 
         for (int i = 0; i < list.getLength(); i++) {
             if (list.value(i) != ((char) ((int) '0') + 4 - i)) {
@@ -113,21 +113,6 @@ public class Main {
             }
         }
         return success;
-    }
-
-    /**
-     * Reverses list
-     * @param list List, which we turn over
-     */
-    private static void reverseList(SLList list) {
-        for (int i = 1; i < list.getLength(); i++) {
-            try {
-                list.insertInBeginning(list.value(i));
-                list.remove(i + 1);
-            } catch (WrongIndexException e){
-                System.err.println("WrongIndexException in reverseList()");
-            }
-        }
     }
 
     /**
