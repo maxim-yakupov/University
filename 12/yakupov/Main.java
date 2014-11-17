@@ -71,9 +71,11 @@ public class Main {
     }
 
     public static boolean test() throws IOException {
-        Map<String, Integer> map = countWords(new BufferedReader(new StringReader("qwe qwe ewe\0")), false);
-        return (map.size() == 2 &&
-                map.get("qwe") == 2 &&
-                map.get("ewe") == 1);
+        Map<String, Integer> map = countWords(new BufferedReader(new StringReader("qwe qwe ewe\nqwe ur\0")), false);
+        return (map.size() == 3 &&
+                map.get("qwe") == 3 &&
+                map.get("ewe") == 1 &&
+                map.get("ur") == 1
+        );
     }
 }
