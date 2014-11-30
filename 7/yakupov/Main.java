@@ -2,7 +2,6 @@ package yakupov;
 
 import java.io.*;
 import java.util.Arrays;
-import java.util.Scanner;
 
 public class Main{
 
@@ -44,45 +43,29 @@ public class Main{
         }
 
         private void loadOut() throws IOException {
-            PrintStream fstr = new PrintStream(
-                    new BufferedOutputStream(
-                            new FileOutputStream(file, true)
-                    )
-            );
+            RandomAccessFile raf = new RandomAccessFile(file, "rw");
             byte tarr[] = new byte[n];
             System.arraycopy(s, 0, tarr, 0, n);
-            for (byte b : tarr) {
-                fstr.print((char) b);
-            }
-            fstr.close();
-            //
+            raf.seek(raf.length());
+            raf.write(tarr);
+            raf.close();
             top -= n;
             System.arraycopy(s, n, s, 0, n);
         }
 
         private void loadIn() throws IOException {
-            Scanner sc = new Scanner(
-                    new FileInputStream(file)
-            );
-            if (!sc.hasNext()) return;
-            byte[] temp = sc.next().getBytes();
-            int i = temp.length;
-            System.arraycopy(temp, i - n, s, 0, n);
-            sc.close();
-            //
-            PrintStream fstr = new PrintStream(
-                    new BufferedOutputStream(
-                            new FileOutputStream(file, false)
-                    )
-            );
-            fstr.print("");
-            byte[] str = new byte[i - n];
-            System.arraycopy(temp, 0, str, 0, i - n);
-            for (byte b : str) {
-                fstr.print((char) b);
+            RandomAccessFile raf = new RandomAccessFile(file, "rw");
+            if (raf.length() == 0) {
+                raf.close();
+                return;
             }
-            fstr.close();
-            //
+            raf.seek(raf.length() - n);
+            byte[] temp = raf.readLine().getBytes();
+            System.arraycopy(temp, 0, s, 0, n);
+
+            raf.setLength(raf.length() - n);
+            raf.close();
+
             top += n;
         }
 
