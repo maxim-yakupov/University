@@ -60,8 +60,8 @@ public class Main{
                 return;
             }
             raf.seek(raf.length() - n);
-            byte[] temp = raf.readLine().getBytes();
-            System.arraycopy(temp, 0, s, 0, n);
+
+            System.arraycopy(raf.readLine().getBytes(), 0, s, 0, n);
 
             raf.setLength(raf.length() - n);
             raf.close();
