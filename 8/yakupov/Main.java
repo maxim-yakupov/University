@@ -10,7 +10,10 @@ public class Main {
     }
 
     public static void tests(int quantity) {
-        int success = 0;
+        System.out.println("=================TESTS===================");
+        int
+                success = 0,
+                wikiSuccess = 0;
         Random rand;
         for (int kek = 1; kek <= quantity; kek++) {
             rand = new Random(System.nanoTime());
@@ -23,16 +26,76 @@ public class Main {
 //            System.out.println();
 
             int[] copy = data.clone();
+            int[] qs = data.clone();
+
+            qsort(qs, 0, qs.length - 1);
             qSortSingleCallRecursion(copy, 0, copy.length - 1);
+
             Arrays.sort(data);
 
-            boolean check = Arrays.equals(copy, data);
+            boolean check = Arrays.equals(copy, data),
+                    wikiCheck = Arrays.equals(qs, data);
             if (check) {
                 success++;
             }
-            System.out.println(kek + ") " + (check ? "Passed" : "Failed"));
+            if (wikiCheck) {
+                wikiSuccess++;
+            }
+            System.out.println(kek + ")");
+            System.out.println("Mine:  " + (check ? "Passed" : "Failed"));
+            System.out.println("Wiki:  " + (wikiCheck ? "Passed" : "Failed"));
         }
-        System.out.println(success + " of " + quantity + " done successfully");
+        System.out.println("-----------------------------------------");
+        System.out.println("Mine:  " + success + " of " + quantity + " done successfully");
+        System.out.println("Wiki:  " + wikiSuccess + " of " + quantity + " done successfully");
+        System.out.println("================END==TESTS===============");
+    }
+
+    /**
+     * qSort implementation from Wikipedia
+     * @param a Array
+     * @param l Left border
+     * @param r Right border
+     */
+    public static void qsort(int[] a, int l, int r){
+        if (l == r) return;//if length equals 1 - finish
+        if ((r - l) == 1 && a[l] < a[r]) {
+            swap(a, l, r);//if length equals 2 - swap if necessary & finish
+        }
+        do {//do until both of borders become equal
+            int
+                    i = l,
+                    j = r,
+                    med = a[(i + j) / 2];
+
+            do {
+                while (a[i] < med) {
+                    i++;
+                }
+                while (a[j] > med) {
+                    j--;
+                }
+                if (i <= j){
+                    if (i < j) {
+                        swap(a, i, j);
+                    }
+                    i++;
+                    j--;
+                }
+            } while (i <= j);
+
+            if (j - l < r - i){//in part, which length is less, run qsort & shift border
+                if (l < j) {
+                    qsort(a, l, j);
+                }
+                l = i;
+            } else {
+                if (i < r) {
+                    qsort(a, i, r);
+                }
+                r = j;
+            }
+        } while (l != r);
     }
 
     /**
@@ -69,7 +132,7 @@ public class Main {
         int x = mas[med];
         int i = leftBorder - 1;
         int j = rightBorder + 1;
-        while (i < j) {
+        while (true) {
             do {
                 i++;
             } while (mas[i] < x);
@@ -78,9 +141,10 @@ public class Main {
             } while (x < mas[j]);
             if (i < j) {
                 swap(mas, i, j);
+            } else {
+                return j;
             }
         }
-        return j;
     }
 
     public static void swap(int[] mas, int leftBorder, int rightBorder)
