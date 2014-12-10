@@ -6,71 +6,74 @@ import java.util.Arrays;
 public class Main{
 
     static class Stack {
+        RandomAccessFile raf;
         int top;
         File file;
         byte s[];
+        int shift;
         int n;
 
-        Stack(int n, File f) {
+        Stack(int n, File f) throws IOException {
+            raf = new RandomAccessFile(f, "rw");
             this.n = n;
             file = f;
+            shift = 0;
             s = new byte[2 * n];
             top = -1;
         }
 
+        private int topInd() {
+            return top % (2 * n);
+        }
+
+        private int beginningInd() {
+            return shift % (2 * n);
+        }
+
         void push(byte b) throws IOException {
             top++;
-            if (top == 2 * n) {
+            if (top != 0 && topInd() == beginningInd()) {
                 loadOut();
             }
-            s[top] = b;
+            s[topInd()] = b;
         }
 
         byte top() {
-            return s[top];
+            return s[topInd()];
         }
 
         byte pop() throws IOException {
-            byte t = s[top];
-            if (top == 0) {
+            byte t = s[topInd()];
+            if (topInd() == beginningInd()) {
                 loadIn();
             }
             top--;
             return t;
         }
+
         boolean isEmpty() {
             return top == -1;
         }
 
         private void loadOut() throws IOException {
-            RandomAccessFile raf = new RandomAccessFile(file, "rw");
-            byte tarr[] = new byte[n];
-            System.arraycopy(s, 0, tarr, 0, n);
             raf.seek(raf.length());
-            raf.write(tarr);
-            raf.close();
-            top -= n;
-            System.arraycopy(s, n, s, 0, n);
+            raf.write(s, beginningInd(), n);
+            shift += n;
         }
 
         private void loadIn() throws IOException {
-            RandomAccessFile raf = new RandomAccessFile(file, "rw");
             if (raf.length() == 0) {
-                raf.close();
                 return;
             }
+            shift -= n;
             raf.seek(raf.length() - n);
-
-            System.arraycopy(raf.readLine().getBytes(), 0, s, 0, n);
-
+            raf.read(s, beginningInd(), n);
             raf.setLength(raf.length() - n);
-            raf.close();
-
-            top += n;
         }
 
         void clear() throws IOException {
             top = -1;
+            shift = 0;
             PrintStream fstr = new PrintStream(
                     new BufferedOutputStream(
                             new FileOutputStream(file, false)
@@ -83,7 +86,7 @@ public class Main{
 
     public static void main(String[] args) throws IOException {
         File file = new File("buffer.txt");
-        String str = "0123456789asdfghjkl;";
+        String str = "123456789asdfghjkl;";
         System.out.println(test(2, file, str.getBytes()) ? "Passed" : "Failed");
     }
 
@@ -108,6 +111,17 @@ public class Main{
             i--;
             tAft[i] = tt[tt.length - i - 1];
         }
+        s.clear();
+        //
+        for (byte b : tAft) {
+            System.out.print((char) b);
+        }
+        System.out.println();
+        for (byte b : str) {
+            System.out.print((char) b);
+        }
+        System.out.println();
+        //
         return Arrays.equals(tAft, str);
     }
 }
