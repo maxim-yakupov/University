@@ -27,18 +27,6 @@ public class Main {
             this.rightChild = r;
         }
 
-//        /**
-//         * Checks, if this element an operation
-//         * @return 'true' if operation, 'false' if not
-//         */
-//        public boolean isOperation() {
-//            return (this.value == '*' ||
-//                    this.value == '/' ||
-//                    this.value == '+' ||
-//                    this.value == '-'
-//            );
-//        }
-
         /**
          * Returns priority of operation in element
          * @return 0 if letter;
@@ -49,28 +37,34 @@ public class Main {
         public int priority() {
             int p = 0;
             if (this.value == '/') {
-                p = 3; // cause not associative operation
+                p = 4; // cause not associative operation
             } else if (this.value == '*') {
+                p = 3;
+            } else if (this.value == '-') {
                 p = 2;
-            } else if (this.value == '+' || this.value == '-') {
+            } else if (this.value == '+') {
                 p = 1;
             }
             return p;
         }
-
+        public boolean isAssoc(char op) {
+            return op == '/' || op == '-';
+        }
         /**
-         * Makes bypass
+         * Makes toInfex
          * @return String with expression
          */
-        public StringBuilder bypass() {
+        public StringBuilder toInfex() {
             StringBuilder str = new StringBuilder();
             if (this.priority() == 0) {
                 str.append(this.value);
             } else {
-                String lStr = leftChild.bypass().toString();
-                String rStr = rightChild.bypass().toString();
+                String lStr = leftChild.toInfex().toString();
+                String rStr = rightChild.toInfex().toString();
 
-                if ((this.priority() > leftChild.priority()) &&
+                if (((this.priority() > leftChild.priority()) ||
+                        (this.priority() == leftChild.priority() && isAssoc(this.value))
+                ) &&
                         (leftChild.priority() != 0)) {
                     str.append('(');
                     str.append(lStr);
@@ -81,7 +75,9 @@ public class Main {
 
                 str.append(this.value);
 
-                if ((this.priority() > rightChild.priority()) &&
+                if ((this.priority() > rightChild.priority() ||
+                        (this.priority() == rightChild.priority() && this.priority() % 2 == 0)
+                ) &&
                         (rightChild.priority() != 0)) {
                     str.append('(');
                     str.append(rStr);
@@ -116,40 +112,31 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException{
         System.out.println(test_bypass() ? "Test passed" : "Test FAILED");
-        try {
+
             System.out.print("Write expression in prefix form: ");
             TreeElement root = readTreeElement(new BufferedReader(
                     new InputStreamReader(System.in)
             ));
             System.out.print("Result: ");
-            System.out.print(root.bypass());
-        } catch (IOException e) {
-            System.err.print("Oups!");
-        }
+            System.out.print(root.toInfex());
     }
 
     /**
      * Test
      * @return 'true' if passed, 'false' if failed
      */
-    private static boolean test_bypass() {
-        TreeElement root = null;
-        boolean success = true;
-        try {
-            root = readTreeElement(
-                    new BufferedReader(
-                            new StringReader("**a/bc+de")
-                    )
-            );
-        } catch (IOException e) {
-            System.err.print("Oups! TEST");
-            success = false;
-        }
-        if ((root == null) || !root.bypass().toString().equals("a*b/c*(d+e)")) {
-            success = false;
-        }
-        return success;
+    private static boolean test_bypass() throws IOException {
+        return (getTreeElement("-*/a-b+cde+f+gh").toInfex().
+                toString().equals("a/(b-(c+d))*e-(f+g+h)"));
+    }
+
+    private static TreeElement getTreeElement(String s) throws IOException {
+        return readTreeElement(
+                            new BufferedReader(
+                                    new StringReader(s)
+                            )
+                       );
     }
 }
