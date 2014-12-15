@@ -3,6 +3,7 @@ package yakupov;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
@@ -48,6 +49,31 @@ public class Main {
         m2.tranponent();
         if (mm.equals(Matrix.multi(m1, m2))) success = false;
         return success;
+    }
+
+    public static void genTests() {
+        for (int n = 5; n < 1100; n *= 2) {
+            Random rnd = new Random(System.nanoTime());
+            long st, en;
+            Matrix m = new Matrix(n, n);
+            Matrix m1 = new Matrix(n, n);
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    m.set(i, j, rnd.nextDouble());
+                    m1.set(i, j, rnd.nextDouble());
+                }
+            }
+            System.out.print(n + ") ");
+            st = System.nanoTime();
+            Matrix.multi(m, m1);
+            en = System.nanoTime();
+            System.out.print((en - st) + " ");
+            m1.tranponent();
+            st = System.nanoTime();
+            Matrix.multiSecondTransp(m, m1);
+            en = System.nanoTime();
+            System.out.print((en - st) + "\n");
+        }
     }
 
     /**
@@ -113,5 +139,6 @@ public class Main {
         myPrintWriter.println("If matrixes are equal, all is OK");
 
         myPrintWriter.close();
+        genTests();
     }
 }
