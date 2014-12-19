@@ -62,8 +62,7 @@ public class Main {
                 String lStr = leftChild.toInfex().toString();
                 String rStr = rightChild.toInfex().toString();
 
-                if (((this.priority() > leftChild.priority()) ||
-                        (this.priority() == leftChild.priority() && isAssoc(this.value))
+                if (((this.priority() > leftChild.priority())
                 ) &&
                         (leftChild.priority() != 0)) {
                     str.append('(');
@@ -76,7 +75,7 @@ public class Main {
                 str.append(this.value);
 
                 if ((this.priority() > rightChild.priority() ||
-                        (this.priority() == rightChild.priority() && this.priority() % 2 == 0)
+                        (this.priority() == rightChild.priority()  && isAssoc(this.value))
                 ) &&
                         (rightChild.priority() != 0)) {
                     str.append('(');
