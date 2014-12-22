@@ -1,7 +1,7 @@
 package yakupov;
 
 public class Edge {
-    Integer vertex1, vertex2;
+    int vertex1, vertex2;
 
     Edge(int v1, int v2) {
         vertex1 = v1;
@@ -17,17 +17,17 @@ public class Edge {
         if (getClass() != e.getClass())
             return false;
         Edge other = (Edge) e;
-        return (vertex1.equals(other.vertex1)) && (vertex2.equals(other.vertex2)) ||
-                (vertex1.equals(other.vertex2)) && (vertex2.equals(other.vertex1));
+        return (vertex1 == other.vertex1) && (vertex2 == other.vertex2) ||
+                (vertex1 == other.vertex2) && (vertex2 == other.vertex1);
     }
 
     @Override
     public int hashCode() {
-        return vertex1.hashCode() + vertex2.hashCode();
+        return Integer.hashCode(vertex1) + Integer.hashCode(vertex2);
     }
 
     @Override
     public String toString() {
-        return vertex1.toString() + "-" + vertex2.toString();
+        return Integer.toString(vertex1) + "-" + Integer.toString(vertex2);
     }
 }

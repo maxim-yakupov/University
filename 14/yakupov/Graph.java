@@ -1,16 +1,14 @@
 package yakupov;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 public class Graph {
 
-    HashMap<Integer, ArrayList<Edge>> edges;
+    HashSet<Edge> edges;
     HashSet<Integer> vertex;
 
     Graph() {
-        edges = new HashMap<Integer, ArrayList<Edge>>();
+        edges = new HashSet<Edge>();
         edges.clear();
         vertex = new HashSet<Integer>();
         vertex.clear();
@@ -22,43 +20,22 @@ public class Graph {
             vertex.add(v1);
             vertex.add(v2);
         }
-        int eHash = e.hashCode();
-        if (edges.containsKey(eHash)) {
-            if (!edges.get(eHash).contains(e)) {
-                edges.get(eHash).add(e);
-            }
-        } else {
-            ArrayList<Edge> l = new ArrayList<Edge>();
-            edges.put(eHash, l);
-            l.add(e);
-        }
+        edges.add(e);
     }
 
     public boolean remove(int v1, int v2) {
         Edge e = new Edge(v1, v2);
-        int eHash = e.hashCode();
-        if (edges.containsKey(eHash)) {
-            if (edges.get(eHash).contains(e)) {
-                boolean success = edges.get(eHash).remove(e);
-                if (edges.get(eHash).size() == 0) {
-                    edges.remove(eHash);
-                }
-                return success;
-            }
-        }
-        return false;
+        return edges.remove(e);
     }
 
-    public boolean removeVertexWithEdges(Integer v) {
+    private boolean removeVertexWithEdges(Integer v) {
         if (!vertex.contains(v)) {
             return false;
         }
-        Graph g = (Graph) this.clone();
-        for (ArrayList<Edge> l : g.edges.values()) {
-            for (Edge e : l) {
-                if (e.vertex1.equals(v) || e.vertex2.equals(v)) {
-                    remove(e.vertex1, e.vertex2);
-                }
+        Graph g = (Graph) clone();
+        for (Edge e : g.edges) {
+            if (e.vertex1 == v || e.vertex2 == v) {
+                remove(e.vertex1, e.vertex2);
             }
         }
         vertex.remove(v);
@@ -68,13 +45,10 @@ public class Graph {
     @Override
     public String toString() {
         StringBuilder strB = new StringBuilder();
-        for (ArrayList<Edge> l : edges.values())
-        {
-            for (Edge e : l) {
-                strB.append("(");
-                strB.append(e.toString());
-                strB.append(") ");
-            }
+        for (Edge e : edges) {
+            strB.append("(");
+            strB.append(e.toString());
+            strB.append(") ");
         }
         if (strB.length() == 0) {
             return "";
@@ -84,24 +58,21 @@ public class Graph {
 
     public ArrayList<Edge> getListOfEdges() {
         ArrayList<Edge> l = new ArrayList<Edge>();
-        for (ArrayList<Edge> lst : edges.values()) {
-            l.addAll(lst);
+        for (Edge e : edges) {
+            l.add(e);
         }
         return l;
     }
 
     public ArrayList<Edge> bridges() {
         ArrayList<Edge> bridges = new ArrayList<Edge>();
-        for (ArrayList<Edge> l : edges.values())
-        {
-            for (Edge e : l) {
-                HashSet<Integer> visitedVertex = new HashSet<Integer>();
-                Graph g = (Graph) this.clone();
-                g.remove(e.vertex1, e.vertex2);
-                search(g, visitedVertex, e.vertex1);
-                if (visitedVertex.size() != vertex.size()) {
-                    bridges.add(e);
-                }
+        for (Edge e : edges) {
+            HashSet<Integer> visitedVertex = new HashSet<Integer>();
+            Graph g = (Graph) this.clone();
+            g.remove(e.vertex1, e.vertex2);
+            search(g, visitedVertex, e.vertex1);
+            if (visitedVertex.size() != vertex.size()) {
+                bridges.add(e);
             }
         }
         return bridges;
@@ -123,7 +94,7 @@ public class Graph {
 
     public HashSet<Graph> doublyConnectedComponent() {
         HashSet<Graph> doublyConnectedComponent = new HashSet<Graph>();
-        for (Integer v : vertex) {
+        for (int v : vertex) {
             Graph g = (Graph) this.clone();
             g.removeVertexWithEdges(v);
             if (g.vertex.size() == 1) break;
@@ -132,7 +103,9 @@ public class Graph {
             if (g.pointsOfJunction().isEmpty() && visitedVertex.size() == g.vertex.size()) {
                 doublyConnectedComponent.add(g);
             }
-            doublyConnectedComponent.addAll(g.doublyConnectedComponent());
+            doublyConnectedComponent.addAll(
+                    g.doublyConnectedComponent()//recursion
+            );
         }
         return doublyConnectedComponent;
     }
@@ -145,18 +118,17 @@ public class Graph {
      * @param v Vertex of beginning
      */
     public void search(Graph g, HashSet<Integer> visitedVertex, Integer v) {
-        visitedVertex.add(v);
-        if (g.vertex.size() == visitedVertex.size()) return;
-        for (Integer sv : g.vertex) {
-            if (!visitedVertex.contains(sv) && g.contains(new Edge(v, sv))) {
-                search(g, visitedVertex, sv);
+        visitedVertex.add(v); //mark vertex visited
+        if (g.vertex.size() == visitedVertex.size()) return; //all vertexes are visited
+        for (Integer sv : g.vertex) {//for each vertex
+            if (!visitedVertex.contains(sv) && g.contains(new Edge(v, sv))) {//if can go from 'v' to 'sv'
+                search(g, visitedVertex, sv);//run search from 'sv'
             }
         }
     }
 
     public boolean contains(Edge e) {
-        return edges.containsKey(e.hashCode()) &&
-                edges.get(e.hashCode()).contains(e);
+        return edges.contains(e);
     }
 
     @Override
@@ -178,18 +150,14 @@ public class Graph {
                 return false;
             }
         }
-        for (ArrayList<Edge> l : edges.values()) {
-            for (Edge e : l) {
-                if (!g.contains(e)) {
-                    return false;
-                }
+        for (Edge e : edges) {
+            if (!g.contains(e)) {
+                return false;
             }
         }
-        for (ArrayList<Edge> l : g.edges.values()) {
-            for (Edge e : l) {
-                if (!contains(e)) {
-                    return false;
-                }
+        for (Edge e : g.edges) {
+            if (!contains(e)) {
+                return false;
             }
         }
         return true;
@@ -201,10 +169,8 @@ public class Graph {
         for (Integer v : vertex) {
             hash += v.hashCode();
         }
-        for (ArrayList<Edge> l : edges.values()) {
-            for (Edge e : l) {
-                hash += e.hashCode();
-            }
+        for (Edge e : edges) {
+            hash += e.hashCode();
         }
         return hash;
     }
@@ -215,12 +181,8 @@ public class Graph {
         for (Integer v : vertex) {
             g.vertex.add(v);
         }
-        for (ArrayList<Edge> l : edges.values()) {
-            ArrayList<Edge> lst = new ArrayList<Edge>();
-            g.edges.put(l.get(0).hashCode(), lst);
-            for (Edge e : l) {
-                lst.add(e);
-            }
+        for (Edge e : edges) {
+            g.edges.add(e);
         }
         return g;
     }

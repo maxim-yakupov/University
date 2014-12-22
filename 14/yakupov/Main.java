@@ -6,8 +6,11 @@ import java.util.HashSet;
 public class Main {
 
     public static void main(String[] args) {
-        test("1-2 2-1 2-3 3-2 2-4 4-2 2-5 5-2 3-4 4-3 4-5 5-4 5-6 6-5");
-        test("1-2 2-3 1-4 2-4 4-6 6-7 7-4");
+//        test("1-2 2-1 2-3 3-2 2-4 4-2 2-5 5-2 3-4 4-3 4-5 5-4 5-6 6-5");
+//        test("1-2 2-3 1-4 2-4 4-6 6-7 7-4");
+//        test("3-2 2-1 1-4 2-4 4-6 6-7 7-4");
+//        test("0-1 1-2 0-3 1-3 3-5 5-6 6-3");
+        test("1-2 2-3 2-4 4-1 4-6 6-7 7-4");
     }
 
     public static boolean test(String testData) {
@@ -35,6 +38,25 @@ public class Main {
         for (Graph g : doublyConnectedComponent) {
             System.out.println("doublyConnectedComponent: [" + g.toString() + "]");
         }
+        //
+
+        BiconnectedComponents bc = new BiconnectedComponents();
+        for (String s : str)
+        {
+            String[] stt = s.split("-");
+            int v1 = Integer.parseInt(stt[0]);
+            int v2 = Integer.parseInt(stt[1]);
+            bc.add(v1, v2);
+        }
+
+        bc.update();
+
+        System.out.println("::::::::::::::::::::::::::::::::::::::::::::");
+        System.out.println("biconnected components:" + bc.components);
+        System.out.println("cutPoints: " + bc.cutPoints);
+        System.out.println("bridges:" + bc.bridges);
+
+        //
         return true;
     }
 }
