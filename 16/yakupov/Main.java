@@ -39,7 +39,7 @@ public class Main {
         {
             // the mth move is from peg (m&m-1)%3 to
             // peg ((m|m-1)+1)%3, where the disks begin on peg 0
-            long h1 = ((k & k - 1) % 3) + 1;
+            long h1 = ((k & (k - 1)) % 3) + 1;
             long h2 = ((k | (k - 1)) + 1) % 3 + 1;
             // and finish on peg 1 or 2
             // according as whether the number of disks is even or odd.
