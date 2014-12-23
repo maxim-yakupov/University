@@ -8,7 +8,8 @@ public class BiconnectedComponents {
     Stack<Edge> stack;
     int curNumberInSearch;
     HashMap<Integer, Integer> numberInSearch;
-    HashMap<Integer, Integer> lowlink;
+    HashMap<Integer, Integer> low;
+
     List<List<Edge>> components;
     List<Integer> cutPoints;
     List<Edge> bridges;
@@ -49,9 +50,9 @@ public class BiconnectedComponents {
         for (int v : vertex) {
             numberInSearch.put(v, 0);
         }
-        lowlink = new HashMap<>();
+        low = new HashMap<>();
         for (int v : vertex) {
-            lowlink.put(v, 0);
+            low.put(v, 0);
         }
 
         components = new ArrayList<>();
@@ -60,15 +61,15 @@ public class BiconnectedComponents {
 
         for (int u : vertex)
             if (!visited.get(u))
-                dfs(u, -1);
+                search(u, -1);
     }
 
-    void dfs(int u, int p) {
+    void search(int u, int p) {
         visited.put(u, true);
 
         curNumberInSearch++;
 
-        lowlink.put(u, curNumberInSearch);
+        low.put(u, curNumberInSearch);
         numberInSearch.put(u, curNumberInSearch);
 
         int children = 0;
@@ -76,24 +77,26 @@ public class BiconnectedComponents {
 
         for (int v : vertex) {
             Edge curEdge = new Edge(v, u);
-            if (!edges.contains(curEdge)) {
+            if (!edges.contains(curEdge)) {//if have not arc between current 'u' and 'v'
                 continue;
             }
-            if (v == p)
+            if (v == p) {//should not go back
                 continue;
+            }
 
             if (visited.get(v)) {
-                if (numberInSearch.get(v) < numberInSearch.get(u)) {
+                if (numberInSearch.get(v) < numberInSearch.get(u)) {//if reverse edge
                     stack.add(curEdge);
-                    lowlink.put(u, Math.min(lowlink.get(u), numberInSearch.get(v)));
+                    low.put(u, Math.min(low.get(u), numberInSearch.get(v)));
                 }
             } else {
                 ++children;
                 stack.add(curEdge);
-                dfs(v, u);
-                lowlink.put(u, Math.min(lowlink.get(u), lowlink.get(v)));
-                if (lowlink.get(v) >= numberInSearch.get(u)) {
-                    cutPoint = true;
+                search(v, u);
+                low.put(u, Math.min(low.get(u), low.get(v)));
+                if (low.get(v) >= numberInSearch.get(u)) {//means there is no reverse edges from childs to parents
+
+                    cutPoint = true;//--------------------
 
                     List<Edge> component = new ArrayList<>();
                     int calc = 0;
@@ -103,7 +106,7 @@ public class BiconnectedComponents {
                         component.add(x);
                         calc++;
                         if (x.equals(curEdge)) {
-                            if (calc == 1) bridges.add(curEdge);
+                            if (calc == 1) bridges.add(curEdge);// biconnected component consisted of 1 edge is a bridge
                             break;
                         }
                     }
