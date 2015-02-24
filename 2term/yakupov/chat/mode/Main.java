@@ -16,8 +16,7 @@ public class Main {
                 new Server();
                 break;
             } else if (answer == 'c') {
-                new Client()
-                        .startMagic();
+                new Client();
                 break;
             } else {
                 System.out.println("Incorrect input. Try again");
