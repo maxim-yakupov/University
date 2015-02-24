@@ -1,27 +1,23 @@
 package yakupov.chat.client;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.*;
 
-import yakupov.chat.mode.Consts;
+import yakupov.chat.common.Consts;
+import yakupov.chat.common.Message;
 
 /**
  * Class of chat's client
  */
 public class Client
 {
-    private BufferedReader in;
-    private PrintWriter out;
     private Socket socket;
 
-    private List<String> history;
+    private ObjectOutputStream oos;
     
-    private Queue<String> deliveryQueue;
-    public Queue<String> receiveQueue;
+    private Queue<Message> deliveryQueue;
+    public Queue<Message> receiveQueue;
 
     private Receiver receiver;
     private ClientGUI gui;
@@ -52,25 +48,23 @@ public class Client
      * @param enteredName Nick-name of user
      */
     private Client(String ip, String enteredName) {
-        history = new ArrayList<String>();
-        history.clear();
-        deliveryQueue = new PriorityQueue<String>();
+        deliveryQueue = new PriorityQueue<Message>();
         deliveryQueue.clear();
 
-        receiveQueue = new PriorityQueue<String>();
+        receiveQueue = new PriorityQueue<Message>();
         receiveQueue.clear();
 
         name = enteredName;
 
         try {
             socket = new Socket(ip, Consts.Port);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new PrintWriter(socket.getOutputStream(), true);
+
+            oos = new ObjectOutputStream(socket.getOutputStream());
 
             receiver = new Receiver();
             receiver.start();
 
-            out.println(name);
+            oos.writeObject(new Message(name, Message.Codes.INIT, name));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -83,22 +77,24 @@ public class Client
         gui = new ClientGUI(this);
 
         while (!exit) {
-            sendMessages();
+            try {
+                sendMessages();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         if (!exit) exit();
-        close();
-        System.exit(0);
     }
 
     /**
      * Sends messages from delivery queue
      */
-    synchronized private void sendMessages() {
+    synchronized private void sendMessages() throws IOException {
         if (!deliveryQueue.isEmpty()) {
-            for (String aDeliveryQueue : deliveryQueue) {
-                System.out.println("sending from queue [" + getName() + "]: " + aDeliveryQueue);//////
-                out.println(aDeliveryQueue);
+            for (Message message : deliveryQueue) {
+                System.out.println("sending from queue [" + getName() + "]: " + message.getStr());//////
+                oos.writeObject(message);
             }
             deliveryQueue.clear();
         }
@@ -106,16 +102,15 @@ public class Client
 
     /**
      * Adds message to delivery queue
-     * @param str Message string
+     * @param message Message string
      */
-    synchronized public void addMessageInQueue(String str) {
-        if (str.equals(Consts.Exit)) {
+    synchronized public void addMessageInQueue(Message message) {
+        if (message.getCode() == Message.Codes.EXIT) {
             exit();
         } else {
-            System.out.println("adding in queue [" + getName() + "]: " + str);//////
-            deliveryQueue.add(str);
+            System.out.println("adding in queue [" + getName() + "]: " + message.getStr());//////
+            deliveryQueue.add(message);
             System.out.println("check adding in queue [" + getName() + "]: " + deliveryQueue.peek());//////
-            history.add(str);
         }
     }
 
@@ -124,9 +119,20 @@ public class Client
      */
     public void exit() {
         receiver.setStop();
-        sendMessages();
+        try {
+            sendMessages();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         exit = true;
-        out.println(Consts.Exit);
+        try {
+            oos.writeObject(new Message(getName(), Message.Codes.EXIT, ""));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //
+        close();
+        System.exit(0);
     }
 
     /**
@@ -138,15 +144,15 @@ public class Client
     }
 
     /**
-     * Closes I/O Streams and socket;
+     * Closes Output Stream and socket;
      */
     private void close() {
         try {
-            in.close();
-            out.close();
+            oos.close();
             socket.close();
         } catch (Exception e) {
             System.err.println("Streams or socket were not closed");
+            e.printStackTrace();
         }
     }
 
@@ -155,14 +161,15 @@ public class Client
      */
     private class Receiver extends Thread {
 
-        private boolean stoped = false;
+        private boolean stopped = false;
+        private ObjectInputStream ois;
 
         /**
          * Stops receiving
-         * (makes flag 'stoped' true)
+         * (makes flag 'stopped' true)
          */
         public void setStop() {
-            stoped = true;
+            stopped = true;
         }
 
         /**
@@ -171,17 +178,22 @@ public class Client
         @Override
         public void run() {
             try {
-                while (!stoped) {
-                    String str = in.readLine();
-                    System.out.println("received: " + str);//////
-                    receiveQueue.add(str);
+                ois = new ObjectInputStream(socket.getInputStream());
+                while (!stopped) {
+                    Message msg = (Message) ois.readObject();
+                    System.out.println("received: " + msg);//////
+                    receiveQueue.add(msg);
                 }
-            } catch (IOException e) {
-                System.err.println("Message receiving error");
-                e.printStackTrace();
-            } catch (NullPointerException e) {
-                System.err.println("NullPointer error while adding message to receive queue");
-                e.printStackTrace();
+                ois.close();
+            } catch (IOException e1) {
+                System.err.println("OK: Can't receive message [occurs when trying to read but socket closes]");
+//                e1.printStackTrace();
+            } catch (NullPointerException e2) {
+                System.err.println("NullPointer error while adding message to receive queue[troubles with input stream]");
+                e2.printStackTrace();
+            } catch (ClassNotFoundException e3) {
+                System.err.println("Serializable class of message not found[troubles in Message class]");
+                e3.printStackTrace();
             }
         }
     }

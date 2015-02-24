@@ -1,11 +1,8 @@
 package yakupov.chat.client;
 
-import yakupov.chat.mode.Consts;
+import java.awt.event.*;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import yakupov.chat.common.Message;
 
 /**
  * Layer between client and GUI
@@ -24,24 +21,25 @@ public class ClientGUIListeners {
     ClientGUIListeners(ClientGUI gui, Client client) {
         this.gui = gui;
         this.client = client;
-        (new Thread(new Runnable() {
-                    public void run() {
-                        while (true) {
-                            displayReceivedMessages();
-                        }
-                    }
-                })).start();
-        }
+        Thread displayReceivedMessages = new Thread(new Runnable() {
+            public void run() {
+                while (true) {
+                    displayReceivedMessages();
+                }
+            }
+        });
+        displayReceivedMessages.setDaemon(true);
+        displayReceivedMessages.start();
+    }
 
     /**
      * Displays messages from receive queue
      */
     private void displayReceivedMessages() {
         if (!client.receiveQueue.isEmpty()) {
-            for (String receiveQueueEl : client.receiveQueue) {
-                if (receiveQueueEl.equals(Consts.Init)) continue;
-                System.out.println("displaying from queue: " + receiveQueueEl);//////
-                gui.displaySetText(receiveQueueEl + "\n", true);
+            for (Message message : client.receiveQueue) {
+                System.out.println("displaying from queue: " + message.toString());//////
+                gui.displaySetText(message + "\n", true);
             }
             client.receiveQueue.clear();
         }
@@ -60,13 +58,13 @@ public class ClientGUIListeners {
             @Override
             public void keyPressed(KeyEvent e) {
                 int kc = e.getKeyCode();
-                String msg = gui.typeAreaGetText();
+                Message msg = new Message(client.getName(), Message.Codes.MSG, gui.typeAreaGetText());
                 if (KeyEvent.getKeyText(kc).equals("Enter")
-                        && !msg.equals("")
+                        && !msg.getStr().equals("")
                         ) {
-                    gui.displaySetText("[" + client.getName() + "]: " + msg + "\n", true);
+                    gui.displaySetText(msg + "\n", true);
                     gui.typeAreaSetText("");
-                    System.out.println("[" + client.getName() + "]: " + msg);//////
+                    System.out.println(msg);//////
                     client.addMessageInQueue(msg);
                 }
             }
@@ -87,6 +85,48 @@ public class ClientGUIListeners {
             public void actionPerformed(ActionEvent e) {
                 gui.displaySetText("", false);
                 gui.typeAreaSetText("");
+            }
+        };
+    }
+
+    /**
+     * Returns WindowListener, which processes closing of window
+     * @return WindowListener
+     */
+    public WindowListener getWindowL() {
+        return new WindowListener() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                client.exit();
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+            }
+
+            @Override
+            public void windowIconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+
             }
         };
     }

@@ -1,16 +1,14 @@
 package yakupov.chat.server;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import yakupov.chat.mode.Consts;
+import yakupov.chat.common.Consts;
+import yakupov.chat.common.Message;
 
 /**
  * Class of chat's server
@@ -66,8 +64,8 @@ public class Server {
      *  - resend messages to other clients
      */
     class Connection extends Thread {
-        private BufferedReader in;
-        private PrintWriter out;
+        private ObjectInputStream ois;
+        private ObjectOutputStream oos;
         private Socket socket;
 
         private String name = "";
@@ -80,12 +78,8 @@ public class Server {
             this.socket = socket;
 
             try {
-                in = new BufferedReader(
-                        new InputStreamReader(
-                            socket.getInputStream()
-                        )
-                );
-                out = new PrintWriter(socket.getOutputStream(), true);
+                ois = new ObjectInputStream(socket.getInputStream());
+                oos = new ObjectOutputStream(socket.getOutputStream());
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -98,31 +92,33 @@ public class Server {
          */
         @Override
         public void run() {
-            String str;
+            Message msg;
             try {
-                name = in.readLine();
+                name = ((Message) ois.readObject()).getStr();
                 Iterator<Connection> iter = connections.iterator();
                 System.out.println(name + " has joined us");
                 while(iter.hasNext()) {
                     Connection currIter = iter.next();
-                    if (!currIter.equals(this)) {
-                        currIter.out.println(name + " has joined us");
+                    if (!currIter.socket.isClosed() && !currIter.equals(this)) {
+                        currIter.oos.writeObject(new Message("SERVER", Message.Codes.MSG, name + " has joined us"));
                     }
-                    else {currIter.out.println(Consts.Init);}
+                    else {
+                        currIter.oos.writeObject(new Message("SERVER", Message.Codes.INIT, "WELCOME"));
+                    }
                 }
 
                 while (true) {
-                    str = in.readLine();
-                    if(str.equals(Consts.Exit)) {
+                    msg = (Message) ois.readObject();
+                    if(msg.getCode() == Message.Codes.EXIT) {
                         break;
                     }
 
                     iter = connections.iterator();
-                    System.out.println(name + ": " + str);
+                    System.out.println(name + ": " + msg.getStr());
                     while(iter.hasNext()) {
                         Connection currIter = iter.next();
-                        if (!currIter.equals(this)) {
-                            currIter.out.println(name + ": " + str);
+                        if (!currIter.socket.isClosed() && !currIter.equals(this)) {
+                            currIter.oos.writeObject(msg);
                         }
                     }
                 }
@@ -131,11 +127,14 @@ public class Server {
                 System.out.println(name + " has left us");
                 while(iter.hasNext()) {
                     Connection currIter = iter.next();
-                    if (!currIter.socket.isClosed()) {
-                        currIter.out.println(name + " has left us");
+                    if (!currIter.equals(this) && !currIter.socket.isClosed()) {
+                        currIter.oos.writeObject(new Message("SERVER", Message.Codes.MSG, name + " has left us"));
                     }
                 }
+
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             } finally {
                 close();
@@ -149,8 +148,8 @@ public class Server {
          */
         public void close() {
             try {
-                in.close();
-                out.close();
+                ois.close();
+                oos.close();
                 socket.close();
 
                 connections.remove(this);
