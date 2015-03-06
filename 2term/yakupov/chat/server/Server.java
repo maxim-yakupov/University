@@ -1,13 +1,13 @@
 package yakupov.chat.server;
 
 import java.io.*;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import yakupov.chat.common.Consts;
 import yakupov.chat.common.Message;
 
 /**
@@ -21,12 +21,24 @@ public class Server {
     /**
      * Constructor of 'Server' class
      *
-     * Listens for sockets and adds connections to the list
+     * Uses any available(free) port
      */
     public Server() {
+        new Server(0);
+    }
+
+    /**
+     * Constructor of 'Server' class
+     *
+     * Listens for sockets and adds connections to the list
+     * @param port Port, which will be listened
+     */
+    public Server(int port) {
         try {
-            server = new ServerSocket(Consts.Port);
-            System.out.println("Server started\nChat log:");
+            String computerName = InetAddress.getLocalHost().getHostName();
+            InetAddress serverIP = InetAddress.getByName(computerName);
+            server = new ServerSocket(port);
+            System.out.println("Server started[IP:" + serverIP.getHostAddress() + "|Port:" + server.getLocalPort() + "]\nChat log:");
             while (true) {
                 Socket socket = server.accept();
 

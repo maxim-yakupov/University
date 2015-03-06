@@ -4,7 +4,6 @@ import java.io.*;
 import java.net.Socket;
 import java.util.*;
 
-import yakupov.chat.common.Consts;
 import yakupov.chat.common.Message;
 
 /**
@@ -17,7 +16,7 @@ public class Client
     private ObjectOutputStream oos;
     
     private Queue<Message> deliveryQueue;
-    public Queue<Message> receiveQueue;
+    private Queue<Message> receiveQueue;
 
     private Receiver receiver;
     private ClientGUI gui;
@@ -34,30 +33,32 @@ public class Client
     public Client(){
         Scanner scan = new Scanner(System.in);
         System.out.println("Enter IP:");
-        String ip = /*scan.nextLine();*/
-                "localhost";
+        String ip = scan.nextLine();
+        System.out.println("Enter port:");
+        int port = Integer.parseInt(scan.nextLine());
         System.out.print("Enter your nick-name:");
         String enteredName = scan.nextLine();
-        new Client(ip, enteredName)
+        new Client(ip, port, enteredName)
                 .startGUI();
     }
 
     /**
      * Makes initialization and starts receiver-thread
      * @param ip IP of server
-     * @param enteredName Nick-name of user
+     * @param port Port, using by server
+     * @param name Nick-name of user
      */
-    private Client(String ip, String enteredName) {
+    private Client(String ip, int port, String name) {
         deliveryQueue = new PriorityQueue<Message>();
         deliveryQueue.clear();
 
         receiveQueue = new PriorityQueue<Message>();
         receiveQueue.clear();
 
-        name = enteredName;
+        this.name = name;
 
         try {
-            socket = new Socket(ip, Consts.Port);
+            socket = new Socket(ip, port);
 
             oos = new ObjectOutputStream(socket.getOutputStream());
 
@@ -157,6 +158,14 @@ public class Client
     }
 
     /**
+     * Returns receive queue
+     * @return Queue
+     */
+    public Queue<Message> getReceiveQueue() {
+        return receiveQueue;
+    }
+
+    /**
      * Class, which receives messages from server
      */
     private class Receiver extends Thread {
@@ -182,11 +191,11 @@ public class Client
                 while (!stopped) {
                     Message msg = (Message) ois.readObject();
                     System.out.println("received: " + msg);//////
-                    receiveQueue.add(msg);
+                    Client.this.getReceiveQueue().add(msg);
                 }
                 ois.close();
             } catch (IOException e1) {
-                System.err.println("OK: Can't receive message [occurs when trying to read but socket closes]");
+                System.err.println("[It's OK if occurs on closing]: Can't receive message [occurs when trying to read but socket closes]");
 //                e1.printStackTrace();
             } catch (NullPointerException e2) {
                 System.err.println("NullPointer error while adding message to receive queue[troubles with input stream]");

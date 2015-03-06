@@ -36,12 +36,12 @@ public class ClientGUIListeners {
      * Displays messages from receive queue
      */
     private void displayReceivedMessages() {
-        if (!client.receiveQueue.isEmpty()) {
-            for (Message message : client.receiveQueue) {
-                System.out.println("displaying from queue: " + message.toString());//////
+        if (!client.getReceiveQueue().isEmpty()) {
+            for (Message message : client.getReceiveQueue()) {
+                System.out.println("displaying from queue: " + message);//////
                 gui.displaySetText(message + "\n", true);
             }
-            client.receiveQueue.clear();
+            client.getReceiveQueue().clear();
         }
     }
 
@@ -58,10 +58,11 @@ public class ClientGUIListeners {
             @Override
             public void keyPressed(KeyEvent e) {
                 int kc = e.getKeyCode();
-                Message msg = new Message(client.getName(), Message.Codes.MSG, gui.typeAreaGetText());
+                String text = gui.typeAreaGetText();
                 if (KeyEvent.getKeyText(kc).equals("Enter")
-                        && !msg.getStr().equals("")
+                        && !text.equals("")
                         ) {
+                    Message msg = new Message(client.getName(), Message.Codes.MSG, text);
                     gui.displaySetText(msg + "\n", true);
                     gui.typeAreaSetText("");
                     System.out.println(msg);//////
