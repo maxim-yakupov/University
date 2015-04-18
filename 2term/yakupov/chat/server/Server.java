@@ -1,14 +1,15 @@
 package yakupov.chat.server;
 
+import yakupov.chat.common.Message;
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import yakupov.chat.common.Message;
 
 /**
  * Class of chat's server
@@ -19,26 +20,26 @@ public class Server {
     private ServerSocket server;
 
     /**
-     * Constructor of 'Server' class
-     *
+     * Constructor of 'Server' class<br>
+     * <br>
      * Uses any available(free) port
      */
     public Server() {
-        new Server(0);
+        init(0);
     }
 
     /**
-     * Constructor of 'Server' class
-     *
-     * Listens for sockets and adds connections to the list
+     * Initializer of 'Server' class
      * @param port Port, which will be listened
      */
-    public Server(int port) {
+    private void init(int port) {
         try {
+            server = new ServerSocket(port);
             String computerName = InetAddress.getLocalHost().getHostName();
             InetAddress serverIP = InetAddress.getByName(computerName);
-            server = new ServerSocket(port);
-            System.out.println("Server started[IP:" + serverIP.getHostAddress() + "|Port:" + server.getLocalPort() + "]\nChat log:");
+            System.out.print("Server started[IP:" + serverIP.getHostAddress());
+            System.out.print("|Port:" + server.getLocalPort());
+            System.out.print("]\nChat log:\n");
             while (true) {
                 Socket socket = server.accept();
 
@@ -47,38 +48,36 @@ public class Server {
 
                 con.start();
             }
+        } catch (SocketException se) {
+            System.err.println("[OK] SocketException: caused by closing ServerSocket while accept() blocks");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             closeAll();
         }
     }
-
+    
     /**
      * Closes connections
      */
     private void closeAll() {
         try {
             server.close();
-
-            Iterator<Connection> iter = connections.iterator();
-            while(iter.hasNext()) {
-                iter.next().close();
-            }
+            connections.forEach(Server.Connection::close);
         } catch (Exception e) {
             System.err.println("Streams was not closed");
         }
     }
 
     /**
-     * Class, which:
-     *  - contains connection between client and server
+     * Class, which:<br>
+     *  - contains connection between client and server<br>
      *  - resend messages to other clients
      */
     class Connection extends Thread {
         private ObjectInputStream ois;
         private ObjectOutputStream oos;
-        private Socket socket;
+        private final Socket socket;
 
         private String name = "";
 
@@ -144,9 +143,7 @@ public class Server {
                     }
                 }
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
+            } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             } finally {
                 close();
@@ -154,8 +151,8 @@ public class Server {
         }
 
         /**
-         * Closes I/O Streams and socket;
-         * Removes this connection from list of connections
+         * Closes I/O Streams and socket;<br>
+         * Removes this connection from list of connections<br>
          * (if list became empty - shutdown server)
          */
         public void close() {

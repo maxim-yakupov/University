@@ -1,14 +1,21 @@
 package yakupov.chat.client;
 
+import yakupov.chat.common.Message;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
- * Class of chat's graphics interface
+ * Class of client's GUI
  */
-public class ClientGUI extends JFrame {
+public class ClientGUI {
 
-    private Client client;
+    private final Client client;
+    private JFrame frame;
     private JButton button;
     private JTextArea displayArea;
     private JTextField typingArea;
@@ -18,53 +25,90 @@ public class ClientGUI extends JFrame {
      * @param client Client-parent
      */
     public ClientGUI(final Client client) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                ClientGUI frame = new ClientGUI(client, "Chat | user: " + client.getName());
-                frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-                frame.addComponentsToPane();
-                frame.pack();
-                frame.addListenersToComponents();
-                frame.setVisible(true);
-            }
-        });
-    }
-
-    /**
-     * Runs constructor of JFrame and init link to client
-     * @param client Client
-     * @param name Title of window
-     */
-    private ClientGUI(Client client, String name) {
-        super(name);
         this.client = client;
+        initComponents();
+        SwingUtilities.invokeLater(this::setGUI);
     }
 
     /**
-     * Place components on content pane
+     * Places components and adds listeners
      */
-    private void addComponentsToPane() {
+    private void setGUI() {
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addComponentsToPane();
+        frame.pack();
+        addListenersToComponents();
+        frame.setVisible(true);
+    }
+
+    /**
+     * Initialised components
+     */
+    private void initComponents() {
+        frame = new JFrame("Chat | user: " + client.getSettings().getName());
         button = new JButton("Clear(history stays)");
         typingArea = new JTextField(20);
-
         displayArea = new JTextArea();
+    }
+
+    /**
+     * Places components on content pane
+     */
+    private void addComponentsToPane() {
         displayArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(displayArea);
         scrollPane.setPreferredSize(new Dimension(375, 125));
 
-        getContentPane().add(typingArea, BorderLayout.PAGE_START);
-        getContentPane().add(scrollPane, BorderLayout.CENTER);
-        getContentPane().add(button, BorderLayout.PAGE_END);
+        frame.add(typingArea, BorderLayout.PAGE_START);
+        frame.add(scrollPane, BorderLayout.CENTER);
+        frame.add(button, BorderLayout.PAGE_END);
     }
 
     /**
      * Adds listeners to components
      */
     private void addListenersToComponents() {
-        ClientGUIListeners control = new ClientGUIListeners(this, client);
-        button.addActionListener(control.getActionL());
-        typingArea.addKeyListener(control.getKeyL());
-        addWindowListener(control.getWindowL());
+        button.addActionListener(e -> {
+            displaySetText("", false);
+            typeAreaSetText("");
+        });
+        typingArea.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int keyCode = e.getKeyCode();
+                String text = typeAreaGetText();
+                if (KeyEvent.getKeyText(keyCode).equals("Enter")
+                        && !text.equals("")
+                        ) {
+                    Message msg = new Message(client.getSettings().getName(), Message.Codes.MSG, text);
+                    displaySetText(msg + "\n", true);
+                    typeAreaSetText("");
+                    System.out.println(msg);//////
+                    client.sendMessage(msg);
+                }
+            }
+        });
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                client.stop();
+            }
+        });
+    }
+
+    /**
+     * Shows message on screen
+     * @param msg Message
+     */
+    public void showNewMessageAsync(Message msg) {
+        displaySetText(msg.toString() + "\n", true);
+    }
+
+    /**
+     * Stops GUI
+     */
+    public void stop() {
+        frame.dispose();
     }
 
     /**
@@ -75,27 +119,30 @@ public class ClientGUI extends JFrame {
      *               <li>if 'false' - replace mode</li>
      *               </ul>
      */
-    public void displaySetText(String str, boolean append) {
-        if (append) {
-            displayArea.append(str);
-        } else {
-            displayArea.setText(str);
-        }
+    private void displaySetText(final String str, final boolean append) {
+        SwingUtilities.invokeLater(() -> {
+            if (append) {
+//                    displayArea.append(str);//adds message on top
+                displayArea.setText(displayArea.getText() + str);//adds message at bottom
+            } else {
+                displayArea.setText(str);
+            }
+        });
     }
 
     /**
      * Set text in editable area
      * @param str text
      */
-    public void typeAreaSetText(String str) {
-        typingArea.setText(str);
+    private void typeAreaSetText(final String str) {
+        SwingUtilities.invokeLater(() -> typingArea.setText(str));
     }
 
     /**
      * Returns text from editable area
      * @return text
      */
-    public String typeAreaGetText() {
+    private String typeAreaGetText() {
         return typingArea.getText();
     }
 }

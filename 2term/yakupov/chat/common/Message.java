@@ -8,40 +8,16 @@ import java.text.SimpleDateFormat;
  */
 public class Message implements Serializable, Comparable {
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Message message = (Message) o;
-
-        if (time != message.time) return false;
-        if (code != message.code) return false;
-        if (!sender.equals(message.sender)) return false;
-        if (str != null ? !str.equals(message.str) : message.str != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = code.hashCode();
-        result = 31 * result + (str != null ? str.hashCode() : 0);
-        result = 31 * result + sender.hashCode();
-        result = 31 * result + (int) (time ^ (time >>> 32));
-        return result;
-    }
-
     public enum Codes {
         INIT,
         MSG,
         EXIT
     }
 
-    private Codes code;
-    private String str;
-    private String sender;
-    private long time;
+    private final Codes code;
+    private final String str;
+    private final String sender;
+    private final long time;
 
     public Message(String sender, Codes code, String str) {
         this.sender = sender;
@@ -99,5 +75,29 @@ public class Message implements Serializable, Comparable {
     public int compareTo(Object o) {
         Message other = (Message) o;
         return (this.time < other.getTime() ? -1 : (this.time == other.getTime() ? 0 : 1));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Message message = (Message) o;
+
+        if (time != message.time) return false;
+        if (code != message.code) return false;
+        if (!sender.equals(message.sender)) return false;
+        if (str != null ? !str.equals(message.str) : message.str != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = code.hashCode();
+        result = 31 * result + (str != null ? str.hashCode() : 0);
+        result = 31 * result + sender.hashCode();
+        result = 31 * result + (int) (time ^ (time >>> 32));
+        return result;
     }
 }
