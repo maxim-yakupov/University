@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CrossesAndZerosLogic</class>
+ <widget class="QWidget" name="CrossesAndZerosLogic">
+  <property name="enabled">
+   <bool>false</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>16</width>
+    <height>16</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>logic</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
